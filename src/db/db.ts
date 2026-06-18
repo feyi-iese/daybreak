@@ -22,6 +22,9 @@ export interface Profile {
   startingWeightKg: number; // canonical: kilograms
   targetWeightKg: number; // canonical: kilograms
   startedAt: number; // epoch ms — when the profile was created
+  disclaimerAcceptedAt?: number; // epoch ms — when health disclaimer was accepted (step 2)
+  weightUnit?: 'kg' | 'lb'; // display preference only — storage stays kg
+  heightUnit?: 'cm' | 'ftin'; // display preference only — storage stays cm
 }
 
 export class AppDB extends Dexie {
@@ -31,9 +34,21 @@ export class AppDB extends Dexie {
     super('mounjaroTracker');
 
     this.version(1).stores({
-      // Singleton store: only '++id' is needed (no other queried/sorted fields).
       profile: '++id',
     });
+
+    // v2: Profile gains disclaimerAcceptedAt + display-unit preferences.
+    // Fields are schemaless in Dexie (no index change), but convention requires
+    // a new version block. Backfill existing rows so older installs stay valid.
+    this.version(2)
+      .stores({ profile: '++id' })
+      .upgrade(async (tx) => {
+        await tx.table('profile').toCollection().modify((p: Record<string, unknown>) => {
+          if (p.disclaimerAcceptedAt == null) p.disclaimerAcceptedAt = (p.startedAt as number) ?? Date.now();
+          if (p.weightUnit == null) p.weightUnit = 'kg';
+          if (p.heightUnit == null) p.heightUnit = 'cm';
+        });
+      });
   }
 }
 

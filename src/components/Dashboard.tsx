@@ -1,5 +1,6 @@
 import { computeBmi, classifyBmi } from '../lib/bmi';
 import type { Profile } from '../db/db';
+import Projection from './Projection';
 
 interface DashboardProps {
   profile: Profile;
@@ -105,6 +106,9 @@ export default function Dashboard({ profile, onEdit }: DashboardProps) {
           </div>
         </div>
       </div>
+
+      {/* ---- Projected journey ---- */}
+      <Projection profile={profile} />
 
       {/* ---- Gentle, non-clinical disclaimer ---- */}
       <p className="caveat mt-8">

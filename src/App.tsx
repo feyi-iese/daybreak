@@ -1,15 +1,8 @@
 import { useEffect, useState, type ReactNode } from 'react';
-import type { Gender, Profile } from './db/db';
-import { getProfile, saveProfile } from './db/profile';
-import ProfileForm from './components/ProfileForm';
+import type { Profile } from './db/db';
+import { getProfile } from './db/profile';
+import OnboardingFlow from './components/onboarding/OnboardingFlow';
 import Dashboard from './components/Dashboard';
-
-interface ProfileInput {
-  gender: Gender;
-  heightCm: number;
-  startingWeightKg: number;
-  targetWeightKg: number;
-}
 
 // Local (non-exported) page chrome: dawn background, centered column,
 // wordmark header, and a gentle entrance for the active screen.
@@ -50,9 +43,7 @@ export default function App() {
     };
   }, []);
 
-  async function handleSubmit(values: ProfileInput) {
-    await saveProfile(values);
-    const saved = await getProfile();
+  function handleComplete(saved: Profile) {
     setProfile(saved);
     setEditing(false);
   }
@@ -68,8 +59,12 @@ export default function App() {
   }
 
   return (
-    <Shell screen="form">
-      <ProfileForm initial={profile} onSubmit={handleSubmit} />
+    <Shell screen="onboarding">
+      <OnboardingFlow
+        mode={profile ? 'edit' : 'create'}
+        initial={profile}
+        onComplete={handleComplete}
+      />
     </Shell>
   );
 }

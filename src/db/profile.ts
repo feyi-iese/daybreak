@@ -13,7 +13,9 @@ export async function saveProfile(
 ): Promise<number> {
   const existing = await db.profile.get(1);
   const startedAt = existing?.startedAt ?? Date.now();
-  await db.profile.put({ ...input, id: 1, startedAt });
+  const disclaimerAcceptedAt =
+    input.disclaimerAcceptedAt ?? existing?.disclaimerAcceptedAt ?? Date.now();
+  await db.profile.put({ ...input, id: 1, startedAt, disclaimerAcceptedAt });
   return 1;
 }
 
