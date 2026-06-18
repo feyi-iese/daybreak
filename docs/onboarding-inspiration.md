@@ -1,4 +1,4 @@
-# Onboarding Inspiration — Clue, Flo, Atoms, MacroFactor
+# Onboarding Inspiration — Clue, Flo, Atoms, MacroFactor, MyFitnessPal
 
 > Source: Mobbin MCP (iOS), reviewed 2026-06-18. Screens visually examined for onboarding flows only.
 
@@ -8,6 +8,7 @@
 - **Flo** — [Onboarding (12)](https://mobbin.com/flows/d64dd348-5de3-40d0-8e2a-1fa781dad065) · [Account/profile setup (34)](https://mobbin.com/flows/541b7fd0-025b-417a-8d74-0185217879ff)
 - **Atoms** — [Onboarding (21)](https://mobbin.com/flows/e66e43ab-81b3-4b95-adb2-3d5855f5674c)
 - **MacroFactor** — [Goal setup (11)](https://mobbin.com/flows/803e7f39-4850-4d28-86a4-8e22ed2fd77b) · [New goal (16)](https://mobbin.com/flows/cc700e5f-76fd-4ac4-8936-6995530e7ba3)
+- **MyFitnessPal** — [Onboarding (24)](https://mobbin.com/flows/6ec621e1-1a65-468d-b979-0e8258d0808b) · [Goals (3)](https://mobbin.com/flows/642b8b00-db61-41ec-90f6-093cabdcb14e) · [Diary Complete projection](https://mobbin.com/screens/f350523d-6314-45b7-bfdf-7ed620b78247)
 
 ---
 
@@ -45,6 +46,13 @@
 - Wheel pickers for precise weight/height — no keyboard.
 - Transparent safety guardrails: the calorie-floor screen warns when your goal rate is unsafe and recommends slowing down. No dark patterns.
 
+
+### MyFitnessPal — the target-time estimation pattern
+- **Two-part projection system**: (1) During onboarding, after entering height/weight/goal, a "What is your weekly goal?" screen offers rate presets (0.2 / **0.5 (Recommended)** / 0.8 / 1.0 kg/week). (2) A **"How much change are you ready for?"** screen with a pace slider labeled "Steady change (Recommended)" shows a **live projection graph** — a curve from current weight (70.0 kg) to goal (75.0 kg) with month markers (Apr → Jun → Aug). The graph updates as you drag the slider.
+- **Diary Complete projection**: After logging a full day, MFP shows: *"If every day were like today, in 5 weeks, you'd weigh **75.1 kg***" with a caveat: *"Your projected weight is an estimate based on your total net calories for today. Actual results may vary."* Simple, motivating, caveat-safe.
+- **Input pattern**: Height uses a **ruler/scroll picker** (with Feet/Inches ↔ Centimeters toggle); weight uses a **numeric keypad** with Pounds / Kilograms / Stone unit toggle. All three fields (height, weight, goal weight) on one scrollable screen under "Just a few more questions" — reassuring copy: *"It's ok to estimate, you can update this later."*
+- **Goals settings**: A single editable screen showing Starting Weight (with date), Current Weight, Goal Weight, Weekly Goal rate, and Activity Level — all tappable to edit. Clean settings-list pattern.
+- **Key takeaway for Daybreak**: MFP's projection graph with a pace slider is the most directly portable pattern for our time-to-target feature. Combine their rate-selector with our SURMOUNT trial data (dose-based % body weight loss over 72 weeks) to project a range rather than a single point — with the same style of caveat.
 ---
 
 ## Recommended adaptation for Daybreak
@@ -58,6 +66,6 @@ Convert today's single 4-field card into a short conversational "Dawn" flow, one
 5. **Starting weight** — wheel picker; dignified copy ("today's number, no judgement").
 6. **Goal weight** — wheel picker; aspirational framing ("where you're headed").
 7. **Privacy beat** — elevate "stays on your device" to its own reassuring step (Clue/Flo pattern).
-8. **Payoff reveal** — the dashboard: BMI start/target + journey rail, PLUS a rough time-to-target range from our SURMOUNT research, with the "individual results vary — not medical advice" caveat (MacroFactor's projection framing, guardrail-safe).
+8. **Payoff reveal** — the dashboard: BMI start/target + journey rail, PLUS a rough time-to-target range from our SURMOUNT research, with the "individual results vary — not medical advice" caveat (MacroFactor's projection framing + **MyFitnessPal's pace-slider-with-graph** pattern, guardrail-safe).
 
 **Tone pillars:** Atoms' dignified identity voice, Clue's privacy candor, MacroFactor's projection payoff, Flo's reassurance cadence.
