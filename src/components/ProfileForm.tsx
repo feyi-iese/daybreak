@@ -49,52 +49,92 @@ export default function ProfileForm({ initial, onSubmit }: ProfileFormProps) {
   }
 
   return (
-    <form onSubmit={handleSubmit}>
-      <div>
-        <label htmlFor="gender">Gender</label>
-        <select
-          id="gender"
-          value={gender}
-          onChange={(e) => setGender(e.target.value as Gender)}
-        >
-          <option value="male">Male</option>
-          <option value="female">Female</option>
-        </select>
+    <form onSubmit={handleSubmit} className="card" noValidate>
+      <header className="mb-7">
+        <p className="hero-eyebrow">Your fresh start</p>
+        <h1 className="hero-title mt-2">A few details to begin</h1>
+        <p className="hero-sub">
+          Tell us where you're starting from so we can walk every step of the
+          journey with you.
+        </p>
+      </header>
+
+      <div className="flex flex-col gap-5">
+        <div className="field-group">
+          <label className="field-label" htmlFor="gender">
+            Gender
+          </label>
+          <select
+            id="gender"
+            className="field-select"
+            value={gender}
+            onChange={(e) => setGender(e.target.value as Gender)}
+          >
+            <option value="male">Male</option>
+            <option value="female">Female</option>
+          </select>
+        </div>
+
+        <div className="field-group">
+          <label className="field-label" htmlFor="heightCm">
+            Height
+          </label>
+          <input
+            id="heightCm"
+            className="field-input"
+            type="number"
+            inputMode="numeric"
+            placeholder="e.g. 170"
+            value={heightCm}
+            onChange={(e) => setHeightCm(e.target.value)}
+          />
+          <p className="field-hint">In centimetres (cm).</p>
+        </div>
+
+        <div className="field-group">
+          <label className="field-label" htmlFor="startingWeightKg">
+            Starting weight
+          </label>
+          <input
+            id="startingWeightKg"
+            className="field-input"
+            type="number"
+            inputMode="decimal"
+            placeholder="e.g. 90"
+            value={startingWeightKg}
+            onChange={(e) => setStartingWeightKg(e.target.value)}
+          />
+          <p className="field-hint">In kilograms (kg) — today's number, no judgement.</p>
+        </div>
+
+        <div className="field-group">
+          <label className="field-label" htmlFor="targetWeightKg">
+            Goal weight
+          </label>
+          <input
+            id="targetWeightKg"
+            className="field-input"
+            type="number"
+            inputMode="decimal"
+            placeholder="e.g. 70"
+            value={targetWeightKg}
+            onChange={(e) => setTargetWeightKg(e.target.value)}
+          />
+          <p className="field-hint">In kilograms (kg) — where you're headed.</p>
+        </div>
       </div>
 
-      <div>
-        <label htmlFor="heightCm">Height (cm)</label>
-        <input
-          id="heightCm"
-          type="number"
-          value={heightCm}
-          onChange={(e) => setHeightCm(e.target.value)}
-        />
-      </div>
-
-      <div>
-        <label htmlFor="startingWeightKg">Starting weight (kg)</label>
-        <input
-          id="startingWeightKg"
-          type="number"
-          value={startingWeightKg}
-          onChange={(e) => setStartingWeightKg(e.target.value)}
-        />
-      </div>
-
-      <div>
-        <label htmlFor="targetWeightKg">Goal weight (kg)</label>
-        <input
-          id="targetWeightKg"
-          type="number"
-          value={targetWeightKg}
-          onChange={(e) => setTargetWeightKg(e.target.value)}
-        />
-      </div>
-
-      <button type="submit" disabled={!isValid}>
-        Save
+      <button
+        type="submit"
+        className="btn btn-accent mt-7 w-full"
+        disabled={!isValid}
+      >
+        Save my plan
       </button>
+
+      <p className="footnote mt-4 text-center">
+        Your data stays on your device.
+      </p>
     </form>
   );
 }

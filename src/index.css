@@ -1,3 +1,209 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* =====================================================================
+   Dawn / New Horizon — base layer
+   ===================================================================== */
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    @apply min-h-screen bg-cream-100 font-sans text-ink antialiased;
+    /* Subtle sunrise wash, fixed so it stays put while content scrolls. */
+    background-image: radial-gradient(
+        120% 80% at 50% -10%,
+        rgba(255, 196, 150, 0.35),
+        transparent 60%
+      ),
+      radial-gradient(
+        100% 60% at 88% 0%,
+        rgba(255, 138, 99, 0.12),
+        transparent 55%
+      ),
+      linear-gradient(180deg, #fff7ee 0%, #fdf4ea 42%, #fbf1e6 100%);
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* Warm, on-brand selection + focus colour. */
+  ::selection {
+    @apply bg-primary-200/60 text-ink;
+  }
+
+  /* Numbers in the display serif read better with lining/tabular figures. */
+  .font-display {
+    font-feature-settings: 'lnum' 1, 'tnum' 1;
+  }
+
+  /* Respect users who prefer less motion: neutralise all animation. */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.001ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+/* =====================================================================
+   Dawn / New Horizon — component catalog
+   These classes are the handoff surface for ProfileForm & Dashboard.
+   ===================================================================== */
+@layer components {
+  /* ---- App shell ---------------------------------------------------- */
+  .app-shell {
+    @apply relative min-h-screen w-full px-5 py-8 sm:px-6 sm:py-12;
+  }
+  .app-main {
+    @apply mx-auto w-full max-w-xl;
+  }
+  /* Soft floating sun glow behind the content (decorative). */
+  .sun-glow {
+    @apply pointer-events-none fixed left-1/2 top-[-7rem] -z-10 h-72 w-72 -translate-x-1/2 rounded-full bg-accent-200/40 blur-3xl;
+  }
+  .wordmark {
+    @apply inline-flex items-center gap-2 font-display text-lg font-semibold tracking-tight text-ink;
+  }
+  .wordmark-dot {
+    @apply inline-block h-2.5 w-2.5 rounded-full bg-accent-400 shadow-glow;
+  }
+
+  /* ---- Surfaces ----------------------------------------------------- */
+  .card {
+    @apply rounded-3xl border border-cream-300/70 bg-cream-50/90 p-6 shadow-card sm:p-8;
+  }
+  .card-quiet {
+    @apply rounded-2xl border border-cream-300/60 bg-cream-100/70 p-5;
+  }
+
+  /* ---- Headings & hero --------------------------------------------- */
+  .hero-eyebrow {
+    @apply text-xs font-semibold uppercase tracking-[0.18em] text-primary-600;
+  }
+  .hero-title {
+    @apply font-display text-3xl font-semibold leading-tight text-ink sm:text-4xl;
+  }
+  .hero-sub {
+    @apply mt-2 text-base leading-relaxed text-ink-soft;
+  }
+  .section-title {
+    @apply font-display text-xl font-semibold text-ink;
+  }
+  .section-label {
+    @apply text-xs font-semibold uppercase tracking-[0.14em] text-ink-muted;
+  }
+
+  /* ---- Buttons ------------------------------------------------------ */
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-2xl px-5 py-3 text-sm font-semibold transition duration-200 ease-out focus:outline-none focus-visible:ring-4 focus-visible:ring-primary-300/50 disabled:cursor-not-allowed disabled:opacity-50;
+  }
+  /* Primary: teal sheen, soft glow, gentle hover lift. */
+  .btn-primary {
+    @apply btn bg-primary-sheen text-cream-50 shadow-glow-primary hover:-translate-y-0.5 hover:shadow-lift active:translate-y-0 disabled:translate-y-0 disabled:shadow-none;
+  }
+  /* Accent: joyful coral CTA. */
+  .btn-accent {
+    @apply btn bg-accent-sheen text-white shadow-glow hover:-translate-y-0.5 hover:shadow-lift active:translate-y-0 disabled:translate-y-0 disabled:shadow-none;
+  }
+  /* Ghost / secondary: quiet outline. */
+  .btn-ghost {
+    @apply btn border border-cream-300 bg-transparent text-ink-soft hover:border-primary-300 hover:bg-cream-100 hover:text-ink;
+  }
+
+  /* ---- Form fields -------------------------------------------------- */
+  .field-group {
+    @apply flex flex-col gap-1.5;
+  }
+  .field-label {
+    @apply text-sm font-medium text-ink-soft;
+  }
+  .field-input {
+    @apply w-full rounded-2xl border border-cream-300 bg-cream-50 px-4 py-3 text-base text-ink shadow-inner-soft transition placeholder:text-ink-muted focus:border-primary-400 focus:outline-none focus:ring-4 focus:ring-primary-300/40;
+  }
+  /* Select: shares the input look + a warm chevron, room on the right. */
+  .field-select {
+    @apply field-input cursor-pointer appearance-none bg-no-repeat pr-11;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%236A6157' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+    background-position: right 0.9rem center;
+    background-size: 1rem;
+  }
+  .field-hint {
+    @apply text-xs text-ink-muted;
+  }
+
+  /* Segmented control (e.g. gender toggle). */
+  .segmented {
+    @apply inline-flex rounded-2xl border border-cream-300 bg-cream-100 p-1;
+  }
+  .segmented-option {
+    @apply rounded-xl px-4 py-2 text-sm font-medium text-ink-soft transition;
+  }
+  .segmented-option--active {
+    @apply bg-cream-50 text-ink shadow-soft;
+  }
+
+  /* ---- Chips & BMI category tones ----------------------------------- */
+  .chip {
+    @apply inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-semibold;
+  }
+  .bmi-chip {
+    @apply chip;
+  }
+  .bmi-chip--underweight {
+    @apply border-tone-sky-edge bg-tone-sky-soft text-tone-sky-ink;
+  }
+  .bmi-chip--normal {
+    @apply border-tone-mint-edge bg-tone-mint-soft text-tone-mint-ink;
+  }
+  .bmi-chip--overweight {
+    @apply border-tone-sun-edge bg-tone-sun-soft text-tone-sun-ink;
+  }
+  .bmi-chip--obese {
+    @apply border-tone-rose-edge bg-tone-rose-soft text-tone-rose-ink;
+  }
+
+  /* ---- Stat / metric blocks ---------------------------------------- */
+  .stat {
+    @apply rounded-2xl border border-cream-300/60 bg-cream-50/80 p-4;
+  }
+  .stat-label {
+    @apply text-xs font-medium uppercase tracking-wide text-ink-muted;
+  }
+  .stat-value {
+    @apply mt-1 font-display text-3xl font-semibold leading-none text-ink;
+  }
+  .stat-unit {
+    @apply ml-1 text-base font-medium text-ink-soft;
+  }
+  .stat-delta {
+    @apply mt-1 text-sm font-medium text-primary-600;
+  }
+
+  /* ---- Journey / progress track ------------------------------------ */
+  .journey-track {
+    @apply relative h-2 w-full overflow-hidden rounded-full bg-cream-200;
+  }
+  .journey-fill {
+    @apply absolute inset-y-0 left-0 rounded-full bg-primary-sheen;
+  }
+  .journey-dot {
+    @apply absolute top-1/2 h-4 w-4 -translate-y-1/2 rounded-full border-2 border-cream-50 bg-primary-500 shadow-soft;
+  }
+
+  /* ---- Supportive copy --------------------------------------------- */
+  .caveat {
+    @apply rounded-2xl border border-cream-300/60 bg-cream-100/70 px-4 py-3 text-xs leading-relaxed text-ink-muted;
+  }
+  .footnote {
+    @apply text-xs leading-relaxed text-ink-muted;
+  }
+}
