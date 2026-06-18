@@ -1,1 +1,1 @@
-{"root":["./src/app.tsx","./src/main.tsx","./src/vite-env.d.ts","./src/db/db.ts","./src/test/setup.ts"],"version":"5.9.3"}
+{"root":["./src/app.tsx","./src/main.tsx","./src/vite-env.d.ts","./src/components/dashboard.tsx","./src/components/profileform.tsx","./src/components/__tests__/app.test.tsx","./src/db/db.ts","./src/db/profile.ts","./src/db/__tests__/profile.test.ts","./src/lib/bmi.ts","./src/lib/__tests__/bmi.test.ts","./src/test/setup.ts"],"version":"5.9.3"}
