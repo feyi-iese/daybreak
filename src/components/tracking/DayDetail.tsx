@@ -1,6 +1,7 @@
 import type { Dose, FeelingLog, VitalLog, WeighIn } from '../../db/db';
 import { formatWeight } from '../../lib/units';
 import { formatDateKey } from '../../lib/dateUtils';
+import { formatInjectionSite } from '../../lib/medications';
 
 interface DayDetailProps {
   selectedDate: Date;
@@ -51,10 +52,13 @@ export default function DayDetail({
             <div className="flex flex-col">
               <span className="text-base font-semibold text-ink">
                 💊 Dose: {dose.dosageMg} mg
-                {dose.injectionSite && dose.injectionSite !== 'None' ? ` (${dose.injectionSite})` : ''}
+                {dose.injectionSite && dose.injectionSite !== 'None' ? ` (${formatInjectionSite(dose.injectionSite)})` : ''}
               </span>
               <span className="footnote mt-1">
-                {dose.name} &middot; Logged {new Date(dose.at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                {dose.name}
+                {dose.takenAt ? (
+                  <> &middot; Taken at {new Date(dose.takenAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</>
+                ) : null}
               </span>
             </div>
             <div className="flex gap-2">

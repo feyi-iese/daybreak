@@ -28,10 +28,11 @@ export interface Profile {
 }
 export interface Dose {
   id?: number;
-  at: number; // epoch ms — timestamp of log
-  name: string; // drug name (e.g. 'tirzepatide')
+  at: number; // epoch ms — start-of-day for the selected calendar date
+  name: string; // drug brand name (e.g. 'Mounjaro', 'Ozempic')
   dosageMg: number; // canonical milligrams
-  injectionSite?: string; // abdomen, thigh, arm
+  injectionSite?: string; // e.g. 'abdomen-upper-left', 'thigh-right'
+  takenAt?: number; // epoch ms — when the dose was actually administered
 }
 
 export interface FeelingLog {

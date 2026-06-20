@@ -10,9 +10,10 @@ describe('doses store CRUD helpers', () => {
   it('adds and lists doses', async () => {
     const id = await addDose({
       at: 1000,
-      name: 'tirzepatide',
+      name: 'Mounjaro',
       dosageMg: 2.5,
-      injectionSite: 'abdomen',
+      injectionSite: 'abdomen-upper-left',
+      takenAt: 3601000,
     });
 
     expect(id).toBe(1);
@@ -21,35 +22,36 @@ describe('doses store CRUD helpers', () => {
     expect(list[0]).toEqual({
       id: 1,
       at: 1000,
-      name: 'tirzepatide',
+      name: 'Mounjaro',
       dosageMg: 2.5,
-      injectionSite: 'abdomen',
+      injectionSite: 'abdomen-upper-left',
+      takenAt: 3601000,
     });
   });
 
   it('updates a dose', async () => {
     const id = await addDose({
       at: 1000,
-      name: 'tirzepatide',
+      name: 'Mounjaro',
       dosageMg: 2.5,
     });
 
     await updateDose(id, {
       at: 1000,
-      name: 'tirzepatide',
+      name: 'Mounjaro',
       dosageMg: 5.0,
-      injectionSite: 'thigh',
+      injectionSite: 'thigh-left',
     });
 
     const list = await listDoses();
     expect(list[0].dosageMg).toBe(5.0);
-    expect(list[0].injectionSite).toBe('thigh');
+    expect(list[0].injectionSite).toBe('thigh-left');
   });
 
   it('deletes a dose', async () => {
     const id = await addDose({
       at: 1000,
-      name: 'tirzepatide',
+      name: 'Mounjaro',
       dosageMg: 2.5,
     });
 

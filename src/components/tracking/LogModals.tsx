@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import type { Dose, FeelingLog, VitalLog, WeighIn } from '../../db/db';
 import { kgToLb, lbToKg } from '../../lib/units';
+import { GLP1_MEDICATIONS, INJECTION_SITES, findMedication } from '../../lib/medications';
 
 interface ModalWrapperProps {
   isOpen: boolean;
@@ -88,30 +89,105 @@ interface DoseModalProps {
 }
 
 export function DoseModal({ isOpen, onClose, selectedDate, initialData, onSave, onDelete }: DoseModalProps) {
+  const [medication, setMedication] = useState<string>('Mounjaro');
+  const [customName, setCustomName] = useState<string>('');   // only for "Other"
   const [dosage, setDosage] = useState<number>(2.5);
+  const [customDosage, setCustomDosage] = useState<string>(''); // only for "Other"
   const [site, setSite] = useState<string>('None');
-
-  const dosages = [2.5, 5, 7.5, 10, 12.5, 15];
-  const sites = ['Abdomen', 'Thigh', 'Arm', 'None'];
+  const [takenTime, setTakenTime] = useState<string>(''); // HH:MM string for <input type="time">
 
   useEffect(() => {
     if (initialData) {
-      setDosage(initialData.dosageMg);
-      setSite(initialData.injectionSite || 'None');
+      // Resolve medication name
+      const knownMed = GLP1_MEDICATIONS.find((m) => m.id === initialData.name);
+      if (knownMed) {
+        setMedication(knownMed.id);
+        setCustomName('');
+        // Resolve dosage
+        if (knownMed.dosesMg.includes(initialData.dosageMg)) {
+          setDosage(initialData.dosageMg);
+        } else {
+          setDosage(knownMed.dosesMg[0]);
+        }
+        setCustomDosage('');
+      } else if (initialData.name === 'tirzepatide') {
+        // legacy name for tirzepatide maps to Mounjaro
+        setMedication('Mounjaro');
+        setCustomName('');
+        const mounjaro = GLP1_MEDICATIONS.find((m) => m.id === 'Mounjaro')!;
+        if (mounjaro.dosesMg.includes(initialData.dosageMg)) {
+          setDosage(initialData.dosageMg);
+        } else {
+          setDosage(mounjaro.dosesMg[0]);
+        }
+        setCustomDosage('');
+      } else {
+        setMedication('Other');
+        setCustomName(initialData.name);
+        setCustomDosage(String(initialData.dosageMg));
+        setDosage(0); // fallback
+      }
+
+      // Resolve injection site
+      const siteExists = INJECTION_SITES.some((s) => s.value === initialData.injectionSite);
+      if (siteExists || initialData.injectionSite === 'None') {
+        setSite(initialData.injectionSite || 'None');
+      } else {
+        setSite('None');
+      }
+
+      if (initialData.takenAt) {
+        const d = new Date(initialData.takenAt);
+        const hh = String(d.getHours()).padStart(2, '0');
+        const mm = String(d.getMinutes()).padStart(2, '0');
+        setTakenTime(`${hh}:${mm}`);
+      } else {
+        setTakenTime('');
+      }
     } else {
-      // Default to 2.5
+      setMedication('Mounjaro');
+      setCustomName('');
       setDosage(2.5);
+      setCustomDosage('');
       setSite('None');
+      const now = new Date();
+      const hh = String(now.getHours()).padStart(2, '0');
+      const mm = String(now.getMinutes()).padStart(2, '0');
+      setTakenTime(`${hh}:${mm}`);
     }
   }, [initialData, isOpen]);
 
+  const handleMedicationChange = (medId: string) => {
+    setMedication(medId);
+    if (medId !== 'Other') {
+      const med = findMedication(medId);
+      if (med) {
+        if (!med.dosesMg.includes(dosage)) {
+          setDosage(med.dosesMg[0]);
+        }
+      }
+    }
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    const resolvedName = medication === 'Other' ? (customName.trim() || 'Other') : medication;
+    const resolvedDosage = medication === 'Other' ? (parseFloat(customDosage) || 0) : dosage;
+
+    let takenAt: number | undefined;
+    if (takenTime) {
+      const [hh, mm] = takenTime.split(':').map(Number);
+      const taken = new Date(selectedDate);
+      taken.setHours(hh, mm, 0, 0);
+      takenAt = taken.getTime();
+    }
+
     void onSave({
       at: selectedDate.getTime(),
-      name: 'tirzepatide',
-      dosageMg: dosage,
+      name: resolvedName,
+      dosageMg: resolvedDosage,
       injectionSite: site,
+      takenAt,
     });
     onClose();
   };
@@ -126,42 +202,183 @@ export function DoseModal({ isOpen, onClose, selectedDate, initialData, onSave, 
     >
       <form onSubmit={handleSubmit} className="space-y-6">
         <div className="field-group">
-          <label className="field-label">Dosage (mg)</label>
-          <div className="grid grid-cols-3 gap-2">
-            {dosages.map((d) => (
+          <label className="field-label">Medication</label>
+          <div role="radiogroup" aria-label="Medication" className="flex flex-col gap-2">
+            {GLP1_MEDICATIONS.map((med) => (
               <button
-                key={d}
                 type="button"
-                onClick={() => setDosage(d)}
-                className={`py-2.5 px-3 text-sm font-semibold rounded-xl border transition
+                role="radio"
+                aria-checked={medication === med.id}
+                key={med.id}
+                onClick={() => handleMedicationChange(med.id)}
+                className={`w-full flex items-center justify-between px-4 py-3 rounded-2xl border text-left transition focus-visible:ring-2 focus-visible:ring-primary-300/50
                   ${
-                    dosage === d
+                    medication === med.id
+                      ? 'bg-primary-500 text-cream-50 border-primary-500 shadow-glow-primary'
+                      : 'border-cream-300 text-ink hover:bg-cream-100'
+                  }`}
+              >
+                <div>
+                  <span className="font-semibold text-sm">{med.brand}</span>
+                  <span
+                    className={`block text-xs ${
+                      medication === med.id ? 'text-cream-100/80' : 'text-ink-muted'
+                    }`}
+                  >
+                    {med.generic}
+                  </span>
+                </div>
+                {medication === med.id && (
+                  <svg className="h-5 w-5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                    <path
+                      fillRule="evenodd"
+                      d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                )}
+              </button>
+            ))}
+            <button
+              type="button"
+              role="radio"
+              aria-checked={medication === 'Other'}
+              onClick={() => handleMedicationChange('Other')}
+              className={`w-full flex items-center justify-between px-4 py-3 rounded-2xl border text-left transition focus-visible:ring-2 focus-visible:ring-primary-300/50
+                ${
+                  medication === 'Other'
+                    ? 'bg-primary-500 text-cream-50 border-primary-500 shadow-glow-primary'
+                    : 'border-cream-300 text-ink hover:bg-cream-100'
+                }`}
+            >
+              <span className="font-semibold text-sm">Other</span>
+              {medication === 'Other' && (
+                <svg className="h-5 w-5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                  <path
+                    fillRule="evenodd"
+                    d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+              )}
+            </button>
+          </div>
+        </div>
+
+        <div className="field-group">
+          <label className="field-label">Dosage (mg)</label>
+          {medication !== 'Other' ? (
+            <div className="grid grid-cols-3 gap-2">
+              {findMedication(medication)!.dosesMg.map((d) => (
+                <button
+                  key={d}
+                  type="button"
+                  onClick={() => setDosage(d)}
+                  className={`py-2.5 px-3 text-sm font-semibold rounded-xl border transition focus-visible:ring-2 focus-visible:ring-primary-300/50
+                    ${
+                      dosage === d
+                        ? 'bg-primary-500 text-cream-50 border-primary-500 shadow-glow-primary'
+                        : 'border-cream-300 text-ink hover:bg-cream-100'
+                    }
+                  `}
+                >
+                  {d} mg
+                </button>
+              ))}
+            </div>
+          ) : (
+            <div className="space-y-3">
+              <input
+                type="text"
+                className="field-input w-full"
+                placeholder="Drug name"
+                value={customName}
+                onChange={(e) => setCustomName(e.target.value)}
+                required={medication === 'Other'}
+              />
+              <div className="relative">
+                <input
+                  type="number"
+                  step="any"
+                  min="0.01"
+                  inputMode="decimal"
+                  className="field-input w-full pr-12"
+                  placeholder="0"
+                  value={customDosage}
+                  onChange={(e) => setCustomDosage(e.target.value)}
+                  required={medication === 'Other'}
+                />
+              </div>
+            </div>
+          )}
+        </div>
+
+        <div className="field-group">
+          <label className="field-label">Injection Site</label>
+          <div role="radiogroup" aria-label="Injection site" className="space-y-4">
+            {(['Abdomen', 'Thigh', 'Upper Arm'] as const).map((area) => {
+              const areaSites = INJECTION_SITES.filter((s) => s.area === area);
+              const gridCols = area === 'Abdomen' ? 'grid-cols-3' : 'grid-cols-2';
+              return (
+                <div key={area} className="space-y-1.5">
+                  <span className="section-label">{area}</span>
+                  <div className={`grid ${gridCols} gap-2`}>
+                    {areaSites.map((s) => (
+                      <button
+                        key={s.value}
+                        type="button"
+                        role="radio"
+                        aria-checked={site === s.value}
+                        aria-label={`${area} ${s.label}`}
+                        onClick={() => setSite(s.value)}
+                        className={`py-2 px-2 text-xs font-semibold rounded-xl border transition focus-visible:ring-2 focus-visible:ring-primary-300/50
+                          ${
+                            site === s.value
+                              ? 'bg-primary-500 text-cream-50 border-primary-500 shadow-glow-primary'
+                              : 'border-cream-300 text-ink hover:bg-cream-100'
+                          }
+                        `}
+                      >
+                        {s.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              );
+            })}
+
+            <div className="pt-3 border-t border-cream-300">
+              <button
+                type="button"
+                role="radio"
+                aria-checked={site === 'None'}
+                aria-label="No injection site"
+                onClick={() => setSite('None')}
+                className={`w-full py-2.5 px-3 text-sm font-semibold rounded-xl border transition focus-visible:ring-2 focus-visible:ring-primary-300/50
+                  ${
+                    site === 'None'
                       ? 'bg-primary-500 text-cream-50 border-primary-500 shadow-glow-primary'
                       : 'border-cream-300 text-ink hover:bg-cream-100'
                   }
                 `}
               >
-                {d} mg
+                None
               </button>
-            ))}
+            </div>
           </div>
+          <span className="field-hint mt-2 block">Rotating injection sites can help minimize skin sensitivity.</span>
         </div>
 
         <div className="field-group">
-          <label className="field-label">Injection Site</label>
-          <div className="segmented w-full">
-            {sites.map((s) => (
-              <button
-                key={s}
-                type="button"
-                onClick={() => setSite(s)}
-                className={`segmented-option ${site === s ? 'segmented-option--active' : ''}`}
-              >
-                {s}
-              </button>
-            ))}
-          </div>
-          <span className="field-hint">Rotating injection sites can help minimize skin sensitivity.</span>
+          <label htmlFor="dose-time" className="field-label">Time Taken</label>
+          <input
+            id="dose-time"
+            type="time"
+            className="field-input w-full"
+            value={takenTime}
+            onChange={(e) => setTakenTime(e.target.value)}
+          />
+          <span className="field-hint">When you administered the injection.</span>
         </div>
 
         <button type="submit" className="btn btn-primary w-full py-3 rounded-2xl font-bold">

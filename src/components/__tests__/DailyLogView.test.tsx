@@ -1,5 +1,5 @@
 import 'fake-indexeddb/auto';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import DailyLogView from '../tracking/DailyLogView';
 import { db } from '../../db/db';
@@ -54,11 +54,11 @@ describe('DailyLogView Integration Flow', () => {
     // Modal appears
     expect(screen.getByRole('heading', { name: /log dose/i })).toBeInTheDocument();
 
-    // Select dosage (5 mg) and site (Thigh)
+    // Select dosage (5 mg) and site (Thigh -> Right)
     const dosageBtn = screen.getByRole('button', { name: /^5 mg$/i });
     await user.click(dosageBtn);
 
-    const siteBtn = screen.getByRole('button', { name: /^thigh$/i });
+    const siteBtn = screen.getByRole('radio', { name: /thigh right/i });
     await user.click(siteBtn);
 
     // Save
@@ -67,11 +67,13 @@ describe('DailyLogView Integration Flow', () => {
 
     // Verify it is logged on screen
     await waitFor(() => {
-      expect(screen.getByText(/dose: 5 mg \(thigh\)/i)).toBeInTheDocument();
+      expect(screen.getByText(/dose: 5 mg \(thigh · right\)/i)).toBeInTheDocument();
     });
 
     // Check DB
     expect(await db.doses.count()).toBe(1);
+    const savedDose = (await db.doses.toArray())[0];
+    expect(typeof savedDose.takenAt).toBe('number');
 
     // Edit the dose
     const editBtn = screen.getByRole('button', { name: /edit/i });
@@ -85,8 +87,105 @@ describe('DailyLogView Integration Flow', () => {
 
     // Verify updated on screen
     await waitFor(() => {
-      expect(screen.getByText(/dose: 7.5 mg \(thigh\)/i)).toBeInTheDocument();
+      expect(screen.getByText(/dose: 7.5 mg \(thigh · right\)/i)).toBeInTheDocument();
     });
+  });
+
+  it('handles medication switching and dynamic dosages', async () => {
+    const user = userEvent.setup();
+    render(<DailyLogView profile={mockProfile} />);
+
+    // Open dose modal
+    const logDoseBtn = screen.getByRole('button', { name: /\+ log dose/i });
+    await user.click(logDoseBtn);
+
+    // Modal appears
+    expect(screen.getByRole('heading', { name: /log dose/i })).toBeInTheDocument();
+
+    // Click Ozempic button/radio
+    const ozempicBtn = screen.getByRole('radio', { name: /ozempic/i });
+    await user.click(ozempicBtn);
+
+    // Verify dynamic dosage grid
+    expect(screen.getByRole('button', { name: /^0\.25 mg$/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /^0\.5 mg$/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /^1 mg$/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /^2 mg$/i })).toBeInTheDocument();
+
+    // Select 1 mg
+    const dose1mgBtn = screen.getByRole('button', { name: /^1 mg$/i });
+    await user.click(dose1mgBtn);
+
+    // Select a site: Abdomen - Upper L
+    const siteBtn = screen.getByRole('radio', { name: /abdomen upper l/i });
+    await user.click(siteBtn);
+
+    // Save
+    const saveBtn = screen.getByRole('button', { name: /record dose/i });
+    await user.click(saveBtn);
+
+    // Verify it is logged on screen
+    await waitFor(() => {
+      expect(screen.getByText(/dose: 1 mg \(abdomen · upper l\)/i)).toBeInTheDocument();
+    });
+
+    // Check DB record
+    const recordedDoses = await db.doses.toArray();
+    expect(recordedDoses).toHaveLength(1);
+    expect(recordedDoses[0].name).toBe('Ozempic');
+    expect(recordedDoses[0].dosageMg).toBe(1.0);
+    expect(recordedDoses[0].injectionSite).toBe('abdomen-upper-left');
+    expect(typeof recordedDoses[0].takenAt).toBe('number');
+  });
+
+  it('time picker persists and round-trips on edit', async () => {
+    const user = userEvent.setup();
+    render(<DailyLogView profile={mockProfile} />);
+
+    // Open dose modal
+    const logDoseBtn = screen.getByRole('button', { name: /\+ log dose/i });
+    await user.click(logDoseBtn);
+
+    // Set time to 14:30 using fireEvent (jsdom does not support userEvent.type on time inputs)
+    const timeInput = screen.getByLabelText(/time taken/i);
+    fireEvent.change(timeInput, { target: { value: '14:30' } });
+
+    // Save
+    const saveBtn = screen.getByRole('button', { name: /record dose/i });
+    await user.click(saveBtn);
+
+    // Verify DB record has correct takenAt
+    const doses = await db.doses.toArray();
+    expect(doses).toHaveLength(1);
+    const takenDate = new Date(doses[0].takenAt!);
+    expect(takenDate.getHours()).toBe(14);
+    expect(takenDate.getMinutes()).toBe(30);
+
+    // Verify footnote shows taken time
+    await waitFor(() => {
+      expect(screen.getByText(/taken at/i)).toBeInTheDocument();
+    });
+
+    // Edit the dose
+    const editBtn = screen.getByRole('button', { name: /edit/i });
+    await user.click(editBtn);
+
+    // Verify time input is pre-filled with 14:30
+    const editTimeInput = screen.getByLabelText(/time taken/i) as HTMLInputElement;
+    expect(editTimeInput.value).toBe('14:30');
+
+    // Change time to 09:00
+    fireEvent.change(editTimeInput, { target: { value: '09:00' } });
+
+    // Save changes
+    const saveChangesBtn = screen.getByRole('button', { name: /save changes/i });
+    await user.click(saveChangesBtn);
+
+    // Verify DB updated
+    const updatedDoses = await db.doses.toArray();
+    const updatedDate = new Date(updatedDoses[0].takenAt!);
+    expect(updatedDate.getHours()).toBe(9);
+    expect(updatedDate.getMinutes()).toBe(0);
   });
 
   it('can log and delete feelings and symptoms', async () => {
