@@ -1,13 +1,13 @@
 import 'fake-indexeddb/auto';
 
-import { render, screen } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 import App from '../../App';
 import { db } from '../../db/db';
 
 beforeEach(async () => {
-  await db.profile.clear();
+  await Promise.all([db.profile.clear(), db.weighIns.clear()]);
   localStorage.clear();
 });
 
@@ -171,5 +171,75 @@ describe('Onboarding flow', () => {
 
     // Dashboard should reflect the gender change
     expect(await screen.findByText('Male')).toBeInTheDocument();
+  });
+
+  it('supports logging a different starting weight and start date (historical start)', async () => {
+    const user = userEvent.setup();
+    render(<App />);
+
+    // Step 1: Welcome
+    await user.click(await screen.findByRole('button', { name: /let.s begin/i }));
+
+    // Step 2: Disclaimer
+    await user.click(await screen.findByRole('switch'));
+    await user.click(screen.getByRole('button', { name: /continue/i }));
+
+    // Step 3: Gender
+    await user.click(await screen.findByRole('radio', { name: /female/i }));
+    await user.click(screen.getByRole('button', { name: /continue/i }));
+
+    // Step 4: Height — Keep default (170 cm), Continue
+    await user.click(await screen.findByRole('button', { name: /continue/i }));
+
+    // Step 5: Weight — Select different starting weight
+    // Today's weight wheel picker defaults to 80 kg
+    
+    // Toggle "No, I started earlier"
+    const startedEarlierBtn = await screen.findByRole('button', {
+      name: /no, i started earlier/i,
+    });
+    await user.click(startedEarlierBtn);
+
+    // Starting weight & start date inputs should now be visible
+    const startingWeightInput = screen.getByLabelText(/starting weight/i);
+    const startDateInput = screen.getByLabelText(/start date/i);
+    expect(startingWeightInput).toBeInTheDocument();
+    expect(startDateInput).toBeInTheDocument();
+
+    // Fill in starting weight (100 kg) and start date (2026-05-01)
+    fireEvent.change(startingWeightInput, { target: { value: '100' } });
+    fireEvent.change(startDateInput, { target: { value: '2026-05-01' } });
+
+    await user.click(screen.getByRole('button', { name: /continue/i }));
+
+    // Step 6: Goal weight — Keep default, Continue
+    await user.click(await screen.findByRole('button', { name: /continue/i }));
+
+    // Step 7: Privacy — click "Save my plan"
+    await user.click(await screen.findByRole('button', { name: /save my plan/i }));
+
+    // Switch to Journey tab
+    await user.click(await screen.findByRole('tab', { name: /my journey/i }));
+
+    // Verify Dashboard shows Past, Now, and Future metrics
+    expect(screen.getByText('Start (Past)')).toBeInTheDocument();
+    expect(screen.getByText('Current (Now)')).toBeInTheDocument();
+    expect(screen.getByText('Goal (Future)')).toBeInTheDocument();
+
+    // Check displayed values
+    expect(screen.getByText('Start (Past)').parentElement?.textContent).toContain('100');
+    expect(screen.getByText('Current (Now)').parentElement?.textContent).toContain('80');
+    
+    // Verify BMI displays are showing (Starting, Current, Target BMIs)
+    expect(screen.getByText('Starting BMI')).toBeInTheDocument();
+    expect(screen.getByText('Current BMI')).toBeInTheDocument();
+    expect(screen.getByText('Target BMI')).toBeInTheDocument();
+
+    // Check DB weighIns count (1 for start, 1 for today)
+    const weighIns = await db.weighIns.toArray();
+    expect(weighIns).toHaveLength(2);
+    const hist = weighIns.find(w => new Date(w.at).getFullYear() === 2026 && new Date(w.at).getMonth() === 4); // May
+    expect(hist).toBeDefined();
+    expect(hist!.weightKg).toBe(100);
   });
 });

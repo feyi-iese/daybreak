@@ -9,10 +9,10 @@ import { db, type Profile } from './db';
  * derived values (BMI is computed on read).
  */
 export async function saveProfile(
-  input: Omit<Profile, 'id' | 'startedAt'>,
+  input: Omit<Profile, 'id' | 'startedAt'> & { startedAt?: number },
 ): Promise<number> {
   const existing = await db.profile.get(1);
-  const startedAt = existing?.startedAt ?? Date.now();
+  const startedAt = input.startedAt ?? existing?.startedAt ?? Date.now();
   const disclaimerAcceptedAt =
     input.disclaimerAcceptedAt ?? existing?.disclaimerAcceptedAt ?? Date.now();
   await db.profile.put({ ...input, id: 1, startedAt, disclaimerAcceptedAt });

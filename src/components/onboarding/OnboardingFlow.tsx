@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useState } from 'react';
 import type { Gender, Profile } from '../../db/db';
 import { getProfile, saveProfile } from '../../db/profile';
+import { addWeighIn } from '../../db/weighIns';
+import { formatDateKey } from '../../lib/dateUtils';
 import WelcomeStep from './steps/WelcomeStep';
 import DisclaimerStep from './steps/DisclaimerStep';
 import GenderStep from './steps/GenderStep';
@@ -8,7 +10,6 @@ import HeightStep from './steps/HeightStep';
 import WeightStep from './steps/WeightStep';
 import GoalWeightStep from './steps/GoalWeightStep';
 import PrivacyStep from './steps/PrivacyStep';
-
 // ---- Public types ----
 
 export interface OnboardingDraft {
@@ -20,6 +21,9 @@ export interface OnboardingDraft {
   targetWeightKg: number;
   weightUnit: 'kg' | 'lb';
   heightUnit: 'cm' | 'ftin';
+  weightTodayKg: number;
+  hasDifferentStartingWeight: boolean;
+  startedAtDate: string;
 }
 
 export interface StepProps {
@@ -62,9 +66,12 @@ function defaultDraft(): OnboardingDraft {
     step: 0,
     heightCm: 170,
     startingWeightKg: 80,
+    weightTodayKg: 80,
     targetWeightKg: deriveGoalWeight(80),
     weightUnit: 'kg',
     heightUnit: 'cm',
+    hasDifferentStartingWeight: false,
+    startedAtDate: formatDateKey(new Date()),
   };
 }
 
@@ -75,9 +82,12 @@ function draftFromProfile(p: Profile): OnboardingDraft {
     gender: p.gender,
     heightCm: p.heightCm,
     startingWeightKg: p.startingWeightKg,
+    weightTodayKg: p.startingWeightKg,
     targetWeightKg: p.targetWeightKg,
     weightUnit: p.weightUnit ?? 'kg',
     heightUnit: p.heightUnit ?? 'cm',
+    hasDifferentStartingWeight: false,
+    startedAtDate: formatDateKey(new Date(p.startedAt)),
   };
 }
 
@@ -89,8 +99,10 @@ function loadDraftFromStorage(): OnboardingDraft | null {
     // Sanity-check: ensure critical numeric fields are valid
     if (parsed.heightCm <= 0) parsed.heightCm = 170;
     if (parsed.startingWeightKg <= 0) parsed.startingWeightKg = 80;
+    if (parsed.weightTodayKg <= 0) parsed.weightTodayKg = parsed.startingWeightKg;
     if (parsed.targetWeightKg <= 0)
       parsed.targetWeightKg = deriveGoalWeight(parsed.startingWeightKg);
+    if (!parsed.startedAtDate) parsed.startedAtDate = formatDateKey(new Date());
     return parsed;
   } catch {
     return null;
@@ -160,10 +172,18 @@ export default function OnboardingFlow({
     if (committing) return;
     setCommitting(true);
     try {
+      const startedAt = draft.hasDifferentStartingWeight
+        ? new Date(draft.startedAtDate + 'T12:00:00').getTime()
+        : Date.now();
+
+      const startingWeightKg = draft.hasDifferentStartingWeight
+        ? draft.startingWeightKg
+        : draft.weightTodayKg;
+
       await saveProfile({
         gender: draft.gender!,
         heightCm: draft.heightCm,
-        startingWeightKg: draft.startingWeightKg,
+        startingWeightKg,
         targetWeightKg: draft.targetWeightKg,
         disclaimerAcceptedAt:
           draft.disclaimerAcceptedAt ??
@@ -171,7 +191,18 @@ export default function OnboardingFlow({
           Date.now(),
         weightUnit: draft.weightUnit,
         heightUnit: draft.heightUnit,
+        startedAt,
       });
+
+      if (draft.hasDifferentStartingWeight) {
+        await Promise.all([
+          addWeighIn({ at: startedAt, weightKg: startingWeightKg }),
+          addWeighIn({ at: Date.now(), weightKg: draft.weightTodayKg }),
+        ]);
+      } else {
+        await addWeighIn({ at: Date.now(), weightKg: draft.weightTodayKg });
+      }
+
       const saved = await getProfile();
       localStorage.removeItem(STORAGE_KEY);
       onComplete(saved!);
