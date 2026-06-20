@@ -26,10 +26,44 @@ export interface Profile {
   weightUnit?: 'kg' | 'lb'; // display preference only — storage stays kg
   heightUnit?: 'cm' | 'ftin'; // display preference only — storage stays cm
 }
+export interface Dose {
+  id?: number;
+  at: number; // epoch ms — timestamp of log
+  name: string; // drug name (e.g. 'tirzepatide')
+  dosageMg: number; // canonical milligrams
+  injectionSite?: string; // abdomen, thigh, arm
+}
+
+export interface FeelingLog {
+  id?: number;
+  at: number; // epoch ms — timestamp of log
+  symptoms: string[]; // array of side effects/symptoms
+  severity?: 'mild' | 'moderate' | 'severe';
+  note?: string;
+}
+
+export interface VitalLog {
+  id?: number;
+  at: number; // epoch ms — timestamp of log
+  bloodSugar?: number; // mg/dL
+  bloodPressureSystolic?: number; // mmHg
+  bloodPressureDiastolic?: number; // mmHg
+  heartRate?: number; // bpm
+  waistCircumferenceCm?: number; // cm
+}
+
+export interface WeighIn {
+  id?: number;
+  at: number; // epoch ms — timestamp of log
+  weightKg: number; // canonical kg
+}
 
 export class AppDB extends Dexie {
   profile!: Table<Profile, number>;
-
+  doses!: Table<Dose, number>;
+  feelings!: Table<FeelingLog, number>;
+  vitals!: Table<VitalLog, number>;
+  weighIns!: Table<WeighIn, number>;
   constructor() {
     super('mounjaroTracker');
 
@@ -49,6 +83,15 @@ export class AppDB extends Dexie {
           if (p.heightUnit == null) p.heightUnit = 'cm';
         });
       });
+
+    // v3: Add daily log tables
+    this.version(3).stores({
+      profile: '++id',
+      doses: '++id, at',
+      feelings: '++id, at',
+      vitals: '++id, at',
+      weighIns: '++id, at',
+    });
   }
 }
 
