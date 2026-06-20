@@ -1,4 +1,6 @@
-import { useCallback } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
+
+const PIXELS_PER_STEP = 35;
 
 interface WheelPickerProps {
   value: number;
@@ -29,6 +31,10 @@ export default function WheelPicker({
   ariaLabel,
   ariaValueText,
 }: WheelPickerProps) {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const dragRef = useRef<{ startY: number; startValue: number } | null>(null);
+  const wasDraggingRef = useRef<boolean>(false);
+
   const adjust = useCallback(
     (delta: number) => {
       const raw = value + delta;
@@ -69,11 +75,67 @@ export default function WheelPicker({
     [adjust, onChange, min, max, step],
   );
 
+  const onPointerDown = useCallback(
+    (e: React.PointerEvent) => {
+      dragRef.current = { startY: e.clientY, startValue: value };
+      const target = e.currentTarget as HTMLElement;
+      if (typeof target.setPointerCapture === 'function') {
+        try {
+          target.setPointerCapture(e.pointerId);
+        } catch {
+          // ignore
+        }
+      }
+      wasDraggingRef.current = false;
+    },
+    [value],
+  );
+
+  const onPointerMove = useCallback(
+    (e: React.PointerEvent) => {
+      const d = dragRef.current;
+      if (!d) return;
+      const deltaY = d.startY - e.clientY;
+      if (Math.abs(deltaY) > 3) {
+        wasDraggingRef.current = true;
+      }
+      const valueDelta = Math.round(deltaY / PIXELS_PER_STEP) * step;
+      const next = clamp(snap(d.startValue + valueDelta, step, min), min, max);
+      if (next !== value) onChange(next);
+    },
+    [step, min, max, value, onChange],
+  );
+
+  const onPointerUp = useCallback((e: React.PointerEvent) => {
+    const target = e.currentTarget as HTMLElement;
+    if (typeof target.releasePointerCapture === 'function') {
+      try {
+        target.releasePointerCapture(e.pointerId);
+      } catch {
+        // ignore
+      }
+    }
+    dragRef.current = null;
+  }, []);
+
+  // Native wheel listener (non-passive to allow preventDefault)
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    const handler = (e: WheelEvent) => {
+      e.preventDefault();
+      adjust(e.deltaY < 0 ? step : -step);
+    };
+    el.addEventListener('wheel', handler, { passive: false });
+    return () => el.removeEventListener('wheel', handler);
+  }, [adjust, step]);
+
   // Show two neighbours on each side of the current value.
   const offsets = [-2, -1, 0, 1, 2];
 
   return (
     <div
+      ref={containerRef}
       role="spinbutton"
       tabIndex={0}
       aria-valuemin={min}
@@ -82,7 +144,11 @@ export default function WheelPicker({
       aria-valuetext={ariaValueText?.(value)}
       aria-label={ariaLabel}
       onKeyDown={handleKeyDown}
-      className="flex flex-col items-center gap-1 rounded-2xl py-6 outline-none focus-visible:ring-4 focus-visible:ring-primary-300/50"
+      onPointerDown={onPointerDown}
+      onPointerMove={onPointerMove}
+      onPointerUp={onPointerUp}
+      onPointerCancel={onPointerUp}
+      className="flex flex-col items-center gap-1 rounded-2xl py-6 outline-none focus-visible:ring-4 focus-visible:ring-primary-300/50 touch-none select-none cursor-ns-resize"
     >
       {offsets.map((offset) => {
         const v = value + offset * step;
@@ -90,18 +156,32 @@ export default function WheelPicker({
           return <div key={offset} className="h-8" aria-hidden="true" />;
         }
         const isCurrent = offset === 0;
+        if (isCurrent) {
+          return (
+            <div
+              key={offset}
+              className="font-display text-3xl font-semibold text-ink"
+            >
+              {formatValue(v)}
+            </div>
+          );
+        }
         return (
-          <div
+          <button
             key={offset}
-            className={
-              isCurrent
-                ? 'font-display text-3xl font-semibold text-ink'
-                : 'text-sm text-ink-muted'
-            }
-            aria-hidden={!isCurrent}
+            type="button"
+            aria-hidden="true"
+            tabIndex={-1}
+            onClick={(e) => {
+              if (!wasDraggingRef.current) {
+                e.stopPropagation();
+                onChange(clamp(v, min, max));
+              }
+            }}
+            className="text-sm text-ink-muted cursor-pointer hover:text-ink transition-colors h-8 px-2"
           >
             {formatValue(v)}
-          </div>
+          </button>
         );
       })}
     </div>
