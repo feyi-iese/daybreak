@@ -15,3 +15,10 @@ yarn-error.log*
 .idea
 # typescript
 *.tsbuildinfo
+.claude
+docs/
+frontend/
+AGENTS.md
+CLAUDE.md
+vite.config.d.ts
+vite.config.js
