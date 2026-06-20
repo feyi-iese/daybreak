@@ -10,13 +10,17 @@ import ProjectionChart from './ProjectionChart';
 
 interface ProjectionProps {
   profile: Profile;
+  currentWeightKg: number;
 }
 
-export default function Projection({ profile }: ProjectionProps) {
-  const { startingWeightKg, targetWeightKg, weightUnit } = profile;
+export default function Projection({ profile, currentWeightKg }: ProjectionProps) {
+  if (currentWeightKg <= profile.targetWeightKg) {
+    return null;
+  }
+  const { targetWeightKg, weightUnit } = profile;
   const unit = weightUnit ?? 'kg';
-  const projected = projectedWeightAt72Weeks(startingWeightKg);
-  const timing = weeksToTarget(startingWeightKg, targetWeightKg);
+  const projected = projectedWeightAt72Weeks(currentWeightKg);
+  const timing = weeksToTarget(currentWeightKg, targetWeightKg);
   const goalBeyondRange = targetWeightKg < projected.low;
 
   const timeRange =
@@ -39,7 +43,7 @@ export default function Projection({ profile }: ProjectionProps) {
             15&ndash;21% of their body weight over 72&nbsp;weeks.
           </p>
           <p className="hero-sub mt-2">
-            Starting from {formatWeight(startingWeightKg, unit)}, that&rsquo;s
+            From your current {formatWeight(currentWeightKg, unit)}, that&rsquo;s
             roughly {formatWeight(projected.low, unit)}&ndash;
             {formatWeight(projected.high, unit)}.
           </p>
@@ -59,7 +63,7 @@ export default function Projection({ profile }: ProjectionProps) {
       )}
 
       <ProjectionChart
-        startKg={startingWeightKg}
+        startKg={currentWeightKg}
         targetKg={targetWeightKg}
         lowProjection={projected.low}
         highProjection={projected.high}

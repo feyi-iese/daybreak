@@ -34,16 +34,17 @@ function makeProfile(overrides: Partial<Profile> = {}): Profile {
 
 describe('Projection', () => {
   it('Branch A: shows trial percentage range and aiming-high note when goal is beyond range', () => {
-    render(<Projection profile={makeProfile({ targetWeightKg: 70 })} />);
+    render(<Projection profile={makeProfile({ targetWeightKg: 70 })} currentWeightKg={95} />);
 
     expect(screen.getByText(/15.*21%/)).toBeInTheDocument();
+    expect(screen.getByText(/from your current 95 kg/i)).toBeInTheDocument();
     expect(screen.getByText(/aiming high/i)).toBeInTheDocument();
     expect(screen.getByText(/goes further/i)).toBeInTheDocument();
     expect(screen.getByText(/not medical advice/i)).toBeInTheDocument();
   });
 
   it('Branch B: shows time-to-target estimate when goal is within range', () => {
-    render(<Projection profile={makeProfile({ targetWeightKg: 90 })} />);
+    render(<Projection profile={makeProfile({ targetWeightKg: 90 })} currentWeightKg={95} />);
 
     expect(screen.getByText(/could take roughly/i)).toBeInTheDocument();
     expect(screen.getByText(/months/i)).toBeInTheDocument();
@@ -51,7 +52,7 @@ describe('Projection', () => {
   });
 
   it('renders chart SVG with non-empty aria-label', () => {
-    render(<Projection profile={makeProfile()} />);
+    render(<Projection profile={makeProfile()} currentWeightKg={95} />);
 
     const svg = screen.getByRole('img');
     expect(svg).toHaveAttribute('aria-label');
@@ -60,14 +61,21 @@ describe('Projection', () => {
 
   it('caveat is present in both branches', () => {
     const { unmount } = render(
-      <Projection profile={makeProfile({ targetWeightKg: 70 })} />,
+      <Projection profile={makeProfile({ targetWeightKg: 70 })} currentWeightKg={95} />,
     );
     expect(document.querySelector('.caveat')).toBeInTheDocument();
     expect(screen.getByText(/not medical advice/i)).toBeInTheDocument();
     unmount();
 
-    render(<Projection profile={makeProfile({ targetWeightKg: 90 })} />);
+    render(<Projection profile={makeProfile({ targetWeightKg: 90 })} currentWeightKg={95} />);
     expect(document.querySelector('.caveat')).toBeInTheDocument();
     expect(screen.getByText(/not medical advice/i)).toBeInTheDocument();
+  });
+
+  it('returns null and renders nothing when target weight is reached or exceeded', () => {
+    const { container } = render(
+      <Projection profile={makeProfile({ targetWeightKg: 70 })} currentWeightKg={70} />
+    );
+    expect(container.firstChild).toBeNull();
   });
 });
