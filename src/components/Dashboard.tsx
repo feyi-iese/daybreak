@@ -4,6 +4,7 @@ import type { Profile } from '../db/db';
 import { listWeighIns } from '../db/weighIns';
 import { formatWeight, kgToLb } from '../lib/units';
 import Projection from './Projection';
+import RisingSunGauge from './RisingSunGauge';
 
 interface DashboardProps {
   profile: Profile;
@@ -65,50 +66,11 @@ export default function Dashboard({ profile, onEdit }: DashboardProps) {
 
       {/* ---- Start -> goal journey (with Today dot positioned dynamically) ---- */}
       <div className="mt-8">
-        <div className="flex items-center justify-between">
-          <span className="section-label">Starting line</span>
-          <span className="section-label text-accent-500">Your goal</span>
-        </div>
-        <div className="journey-track mt-3 relative">
-          <div
-            className="journey-fill animate-shimmer"
-            style={{ width: `${pct}%` }}
-            aria-hidden="true"
-          />
-          {/* Start Dot */}
-          <span className="journey-dot left-0" aria-hidden="true" />
-          {/* Today Dot */}
-          <span
-            className="journey-dot bg-primary-500 shadow-glow-primary transition-all duration-500"
-            style={{ left: `${pct}%`, transform: 'translateX(-50%)' }}
-            aria-hidden="true"
-          />
-          {/* Goal Dot */}
-          <span
-            className="journey-dot right-0 bg-accent-400 shadow-glow animate-glow-pulse"
-            aria-hidden="true"
-          />
-        </div>
-        <p className="hero-sub mt-4 text-sm">
-          {currentChange > 0 ? (
-            <>
-              You&rsquo;ve already lost{' '}
-              <strong>{formatWeight(currentChange, unit)}</strong> (
-              {Math.round(pct)}% of your goal) since you began on{' '}
-              {formattedStartDate}. There is about{' '}
-              <strong>{formatWeight(remainingChange, unit)}</strong> of beautiful
-              momentum between where you stand today and the person you&rsquo;re
-              becoming.
-            </>
-          ) : (
-            <>
-              There is about{' '}
-              <strong>{formatWeight(remainingChange, unit)}</strong> of beautiful
-              momentum between where you stand today and the person you&rsquo;re
-              becoming.
-            </>
-          )}
-        </p>
+        <RisingSunGauge
+          pct={pct}
+          lost={formatWeight(Math.max(0, currentChange), unit)}
+          remaining={formatWeight(Math.max(0, remainingChange), unit)}
+        />
       </div>
 
       {/* ---- The inputs you entered ---- */}
@@ -190,7 +152,7 @@ export default function Dashboard({ profile, onEdit }: DashboardProps) {
       </div>
 
       {/* ---- Projected journey ---- */}
-      <Projection profile={profile} />
+      <Projection profile={profile} currentWeightKg={currentWeight} />
 
       {/* ---- Gentle, non-clinical disclaimer ---- */}
       <p className="caveat mt-8">
