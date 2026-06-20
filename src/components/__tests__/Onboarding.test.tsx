@@ -93,6 +93,9 @@ describe('Onboarding flow', () => {
       await screen.findByRole('button', { name: /save my plan/i }),
     );
 
+    // Select My Journey tab to show the dashboard
+    await user.click(await screen.findByRole('tab', { name: /my journey/i }));
+
     // Dashboard should appear (shown by Edit details button)
     await screen.findByRole('button', { name: /edit details/i });
 
@@ -128,6 +131,9 @@ describe('Onboarding flow', () => {
       await screen.findByRole('button', { name: /save my plan/i }),
     );
 
+    // Select My Journey tab to show the dashboard
+    await user.click(await screen.findByRole('tab', { name: /my journey/i }));
+
     // Dashboard appears
     const editBtn = await screen.findByRole('button', {
       name: /edit details/i,
@@ -159,6 +165,9 @@ describe('Onboarding flow', () => {
     await user.click(
       await screen.findByRole('button', { name: /save changes/i }),
     );
+
+    // Select My Journey tab to show the dashboard
+    await user.click(await screen.findByRole('tab', { name: /my journey/i }));
 
     // Dashboard should reflect the gender change
     expect(await screen.findByText('Male')).toBeInTheDocument();

@@ -2,7 +2,7 @@ import { useEffect, useState, type ReactNode } from 'react';
 import type { Profile } from './db/db';
 import { getProfile } from './db/profile';
 import OnboardingFlow from './components/onboarding/OnboardingFlow';
-import Dashboard from './components/Dashboard';
+import MainHub from './components/MainHub';
 
 // Local (non-exported) page chrome: dawn background, centered column,
 // wordmark header, and a gentle entrance for the active screen.
@@ -52,8 +52,8 @@ export default function App() {
 
   if (profile && !editing) {
     return (
-      <Shell screen="dashboard">
-        <Dashboard profile={profile} onEdit={() => setEditing(true)} />
+      <Shell screen="hub">
+        <MainHub profile={profile} onEdit={() => setEditing(true)} />
       </Shell>
     );
   }
