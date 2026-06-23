@@ -22,7 +22,6 @@ beforeEach(async () => {
     db.vitals.clear(),
     db.weighIns.clear(),
   ]);
-  vi.spyOn(window, 'confirm').mockImplementation(() => true);
 });
 
 afterEach(() => {
@@ -67,7 +66,7 @@ describe('DailyLogView Integration Flow', () => {
 
     // Verify it is logged on screen
     await waitFor(() => {
-      expect(screen.getByText(/dose: 5 mg \(thigh · right\)/i)).toBeInTheDocument();
+      expect(screen.getByText(/dose:/i)).toHaveTextContent(/dose: 5 mg \(thigh · right\)/i);
     });
 
     // Check DB
@@ -87,7 +86,7 @@ describe('DailyLogView Integration Flow', () => {
 
     // Verify updated on screen
     await waitFor(() => {
-      expect(screen.getByText(/dose: 7.5 mg \(thigh · right\)/i)).toBeInTheDocument();
+      expect(screen.getByText(/dose:/i)).toHaveTextContent(/dose: 7.5 mg \(thigh · right\)/i);
     });
   });
 
@@ -126,7 +125,7 @@ describe('DailyLogView Integration Flow', () => {
 
     // Verify it is logged on screen
     await waitFor(() => {
-      expect(screen.getByText(/dose: 1 mg \(abdomen · upper l\)/i)).toBeInTheDocument();
+      expect(screen.getByText(/dose:/i)).toHaveTextContent(/dose: 1 mg \(abdomen · upper l\)/i);
     });
 
     // Check DB record
@@ -217,9 +216,12 @@ describe('DailyLogView Integration Flow', () => {
       expect(screen.getByText(/“felt tired”/i)).toBeInTheDocument();
     });
 
-    // Delete it
-    const deleteBtn = screen.getByRole('button', { name: /delete/i });
+    // Delete it (opens the custom confirm dialog, no native window.confirm)
+    const deleteBtn = screen.getByRole('button', { name: /^delete$/i });
     await user.click(deleteBtn);
+
+    const confirmBtn = await screen.findByRole('button', { name: /delete entry/i });
+    await user.click(confirmBtn);
 
     // Empty state should return
     await waitFor(() => {
@@ -269,7 +271,7 @@ describe('DailyLogView Integration Flow', () => {
     await user.click(saveBtn);
 
     await waitFor(() => {
-      expect(screen.getByText(/weight: 82.5 kg/i)).toBeInTheDocument();
+      expect(screen.getByText(/weight:/i)).toHaveTextContent(/weight: 82.5 kg/i);
     });
   });
 });

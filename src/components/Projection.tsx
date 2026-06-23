@@ -25,7 +25,7 @@ export default function Projection({ profile, currentWeightKg }: ProjectionProps
 
   const timeRange =
     timing.fast != null && timing.slow != null
-      ? `${formatWeeksAsMonths(timing.fast)}\u2013${formatWeeksAsMonths(timing.slow)}`
+      ? `${formatWeeksAsMonths(timing.fast)} to ${formatWeeksAsMonths(timing.slow)}`
       : timing.fast != null
         ? formatWeeksAsMonths(timing.fast)
         : timing.slow != null
@@ -33,29 +33,29 @@ export default function Projection({ profile, currentWeightKg }: ProjectionProps
           : null;
 
   return (
-    <div className="mt-8">
-      <h2 className="section-title">Your projected journey</h2>
+    <div className="space-y-4">
+      <h2 className="section-title tracking-tight">Your projected journey</h2>
 
       {goalBeyondRange ? (
         <>
-          <p className="hero-sub mt-4">
+          <p className="hero-sub mt-4 max-w-[52ch]">
             Based on clinical trials, people taking tirzepatide lost about
-            15&ndash;21% of their body weight over 72&nbsp;weeks.
+            15-21% of their body weight over 72&nbsp;weeks.
           </p>
-          <p className="hero-sub mt-2">
+          <p className="hero-sub mt-2 max-w-[52ch]">
             From your current {formatWeight(currentWeightKg, unit)}, that&rsquo;s
-            roughly {formatWeight(projected.low, unit)}&ndash;
+            roughly {formatWeight(projected.low, unit)} to{' '}
             {formatWeight(projected.high, unit)}.
           </p>
-          <p className="hero-sub mt-2">
+          <p className="hero-sub mt-2 max-w-[52ch]">
             Your goal of {formatWeight(targetWeightKg, unit)} goes further than
-            trial averages reached &mdash; which means you&rsquo;re aiming high.
+            trial averages reached, which means you&rsquo;re aiming high.
             Fantastic.
           </p>
         </>
       ) : (
         timeRange != null && (
-          <p className="hero-sub mt-4">
+          <p className="hero-sub mt-4 max-w-[52ch]">
             Based on clinical trial averages, reaching{' '}
             {formatWeight(targetWeightKg, unit)} could take roughly {timeRange}.
           </p>
@@ -70,9 +70,9 @@ export default function Projection({ profile, currentWeightKg }: ProjectionProps
         horizonWeeks={SURMOUNT_HORIZON_WEEKS}
       />
 
-      <p className="caveat mt-4">
+      <p className="caveat mt-4 max-w-[60ch]">
         These ranges are drawn from the SURMOUNT-1 clinical trial
-        (72&nbsp;weeks, tirzepatide 5&ndash;15&nbsp;mg). Individual results vary
+        (72&nbsp;weeks, tirzepatide 5-15&nbsp;mg). Individual results vary
         based on dose, adherence, diet, and activity. This is not medical advice.
       </p>
     </div>

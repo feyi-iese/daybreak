@@ -211,7 +211,7 @@ export function DoseModal({ isOpen, onClose, selectedDate, initialData, onSave, 
                 aria-checked={medication === med.id}
                 key={med.id}
                 onClick={() => handleMedicationChange(med.id)}
-                className={`w-full flex items-center justify-between px-4 py-3 rounded-2xl border text-left transition focus-visible:ring-2 focus-visible:ring-primary-300/50
+                className={`w-full flex items-center justify-between px-4 py-3 rounded-2xl border text-left transition active:scale-[0.98] focus-visible:ring-2 focus-visible:ring-primary-300/50
                   ${
                     medication === med.id
                       ? 'bg-primary-500 text-cream-50 border-primary-500 shadow-glow-primary'
@@ -244,7 +244,7 @@ export function DoseModal({ isOpen, onClose, selectedDate, initialData, onSave, 
               role="radio"
               aria-checked={medication === 'Other'}
               onClick={() => handleMedicationChange('Other')}
-              className={`w-full flex items-center justify-between px-4 py-3 rounded-2xl border text-left transition focus-visible:ring-2 focus-visible:ring-primary-300/50
+              className={`w-full flex items-center justify-between px-4 py-3 rounded-2xl border text-left transition active:scale-[0.98] focus-visible:ring-2 focus-visible:ring-primary-300/50
                 ${
                   medication === 'Other'
                     ? 'bg-primary-500 text-cream-50 border-primary-500 shadow-glow-primary'
@@ -274,7 +274,7 @@ export function DoseModal({ isOpen, onClose, selectedDate, initialData, onSave, 
                   key={d}
                   type="button"
                   onClick={() => setDosage(d)}
-                  className={`py-2.5 px-3 text-sm font-semibold rounded-xl border transition focus-visible:ring-2 focus-visible:ring-primary-300/50
+                  className={`py-2.5 px-3 text-sm font-semibold rounded-xl border transition active:scale-[0.97] focus-visible:ring-2 focus-visible:ring-primary-300/50
                     ${
                       dosage === d
                         ? 'bg-primary-500 text-cream-50 border-primary-500 shadow-glow-primary'
@@ -302,7 +302,7 @@ export function DoseModal({ isOpen, onClose, selectedDate, initialData, onSave, 
                   step="any"
                   min="0.01"
                   inputMode="decimal"
-                  className="field-input w-full pr-12"
+                  className="field-input w-full pr-12 font-mono tabular-nums"
                   placeholder="0"
                   value={customDosage}
                   onChange={(e) => setCustomDosage(e.target.value)}
@@ -331,7 +331,7 @@ export function DoseModal({ isOpen, onClose, selectedDate, initialData, onSave, 
                         aria-checked={site === s.value}
                         aria-label={`${area} ${s.label}`}
                         onClick={() => setSite(s.value)}
-                        className={`py-2 px-2 text-xs font-semibold rounded-xl border transition focus-visible:ring-2 focus-visible:ring-primary-300/50
+                        className={`py-2 px-2 text-xs font-semibold rounded-xl border transition active:scale-[0.97] focus-visible:ring-2 focus-visible:ring-primary-300/50
                           ${
                             site === s.value
                               ? 'bg-primary-500 text-cream-50 border-primary-500 shadow-glow-primary'
@@ -354,7 +354,7 @@ export function DoseModal({ isOpen, onClose, selectedDate, initialData, onSave, 
                 aria-checked={site === 'None'}
                 aria-label="No injection site"
                 onClick={() => setSite('None')}
-                className={`w-full py-2.5 px-3 text-sm font-semibold rounded-xl border transition focus-visible:ring-2 focus-visible:ring-primary-300/50
+                className={`w-full py-2.5 px-3 text-sm font-semibold rounded-xl border transition active:scale-[0.97] focus-visible:ring-2 focus-visible:ring-primary-300/50
                   ${
                     site === 'None'
                       ? 'bg-primary-500 text-cream-50 border-primary-500 shadow-glow-primary'
@@ -478,7 +478,7 @@ export function FeelingModal({ isOpen, onClose, selectedDate, initialData, onSav
             <button
               type="button"
               onClick={() => toggleSymptom('Feeling great!')}
-              className={`py-2 px-3 text-sm font-semibold rounded-full border transition
+              className={`py-2 px-3 text-sm font-semibold rounded-full border transition focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-300/50 active:scale-95
                 ${
                   isFeelingGreat
                     ? 'bg-tone-mint-soft text-tone-mint-ink border-tone-mint-edge'
@@ -495,7 +495,7 @@ export function FeelingModal({ isOpen, onClose, selectedDate, initialData, onSav
                   key={sym}
                   type="button"
                   onClick={() => toggleSymptom(sym)}
-                  className={`py-2 px-3 text-sm font-semibold rounded-full border transition
+                  className={`py-2 px-3 text-sm font-semibold rounded-full border transition focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-300/50 active:scale-95
                     ${
                       isChecked
                         ? 'bg-tone-rose-soft text-tone-rose-ink border-tone-rose-edge'
@@ -513,17 +513,30 @@ export function FeelingModal({ isOpen, onClose, selectedDate, initialData, onSav
         {selectedSymptoms.length > 0 && (
           <div className="field-group animate-fade-rise">
             <label className="field-label">Symptom Severity</label>
-            <div className="segmented w-full">
-              {(['mild', 'moderate', 'severe'] as const).map((sev) => (
-                <button
-                  key={sev}
-                  type="button"
-                  onClick={() => setSeverity(sev)}
-                  className={`segmented-option capitalize ${severity === sev ? 'segmented-option--active' : ''}`}
-                >
-                  {sev}
-                </button>
-              ))}
+            <div className="segmented w-full flex" role="radiogroup" aria-label="Symptom Severity">
+              {(['mild', 'moderate', 'severe'] as const).map((sev) => {
+                const isActive = severity === sev;
+                let activeStyle = 'segmented-option--active text-ink bg-cream-50 shadow-sm';
+                if (isActive) {
+                  if (sev === 'mild') activeStyle = 'bg-tone-mint-soft text-tone-mint-ink border border-tone-mint-edge/50 shadow-sm';
+                  if (sev === 'moderate') activeStyle = 'bg-tone-sun-soft text-tone-sun-ink border border-tone-sun-edge/50 shadow-sm';
+                  if (sev === 'severe') activeStyle = 'bg-tone-rose-soft text-tone-rose-ink border border-tone-rose-edge/50 shadow-sm';
+                }
+                return (
+                  <button
+                    key={sev}
+                    type="button"
+                    role="radio"
+                    aria-checked={isActive}
+                    onClick={() => setSeverity(sev)}
+                    className={`segmented-option flex-1 flex items-center justify-center py-2.5 text-sm font-semibold rounded-xl capitalize transition duration-200 ease-out focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-300/50 active:scale-95 ${
+                      isActive ? activeStyle : 'text-ink-soft hover:text-ink'
+                    }`}
+                  >
+                    {sev}
+                  </button>
+                );
+              })}
             </div>
           </div>
         )}
@@ -617,7 +630,7 @@ export function VitalsModal({ isOpen, onClose, selectedDate, initialData, onSave
               type="number"
               min="20"
               max="600"
-              className="field-input w-full pr-16"
+              className="field-input w-full pr-16 font-mono tabular-nums"
               placeholder="e.g. 95"
               value={bloodSugar}
               onChange={(e) => setBloodSugar(e.target.value)}
@@ -635,7 +648,7 @@ export function VitalsModal({ isOpen, onClose, selectedDate, initialData, onSave
                 type="number"
                 min="50"
                 max="250"
-                className="field-input w-full text-center"
+                className="field-input w-full text-center font-mono tabular-nums"
                 placeholder="Systolic (120)"
                 value={bpSys}
                 onChange={(e) => setBpSys(e.target.value)}
@@ -648,7 +661,7 @@ export function VitalsModal({ isOpen, onClose, selectedDate, initialData, onSave
                 type="number"
                 min="30"
                 max="150"
-                className="field-input w-full text-center"
+                className="field-input w-full text-center font-mono tabular-nums"
                 placeholder="Diastolic (80)"
                 value={bpDia}
                 onChange={(e) => setBpDia(e.target.value)}
@@ -666,7 +679,7 @@ export function VitalsModal({ isOpen, onClose, selectedDate, initialData, onSave
               type="number"
               min="30"
               max="220"
-              className="field-input w-full pr-16"
+              className="field-input w-full pr-16 font-mono tabular-nums"
               placeholder="e.g. 72"
               value={heartRate}
               onChange={(e) => setHeartRate(e.target.value)}
@@ -684,7 +697,7 @@ export function VitalsModal({ isOpen, onClose, selectedDate, initialData, onSave
               min="30"
               max="250"
               step="0.1"
-              className="field-input w-full pr-16"
+              className="field-input w-full pr-16 font-mono tabular-nums"
               placeholder="e.g. 85"
               value={waist}
               onChange={(e) => setWaist(e.target.value)}
@@ -756,7 +769,7 @@ export function WeightModal({ isOpen, onClose, selectedDate, initialData, weight
               min="30"
               max="600"
               required
-              className="field-input w-full pr-16 text-lg font-semibold"
+              className="field-input w-full pr-16 text-lg font-semibold font-mono tabular-nums"
               placeholder={weightUnit === 'lb' ? '175.0' : '80.0'}
               value={weightInput}
               onChange={(e) => setWeightInput(e.target.value)}

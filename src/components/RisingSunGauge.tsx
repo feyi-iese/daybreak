@@ -1,5 +1,5 @@
 interface RisingSunGaugeProps {
-  pct: number;       // 0–100, clamped
+  pct: number;       // 0-100, clamped
   lost: string;      // pre-formatted, e.g. "3.2 kg"
   remaining: string; // pre-formatted, e.g. "4.5 kg"
 }
@@ -33,23 +33,23 @@ export default function RisingSunGauge({ pct, lost, remaining }: RisingSunGaugeP
           <defs>
             {/*
               Gradient stop hex values are mapped directly from tailwind.config.js:
-              - #FBC56A -> sun.300 (starting warm amber)
-              - #FF7A53 -> accent.400 (midpoint warm coral)
-              - #129B86 -> primary.500 (destination confident teal)
+              - #6E86E2 -> primary.300 light cobalt
+              - #0038FF -> primary.500 electric cobalt
+              - #002FA7 -> primary.600 royal cobalt
             */}
             <linearGradient id="sun-arc-grad" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" stopColor="#FBC56A" />
-              <stop offset="50%" stopColor="#FF7A53" />
-              <stop offset="100%" stopColor="#129B86" />
+              <stop offset="0%" stopColor="#6E86E2" />
+              <stop offset="50%" stopColor="#0038FF" />
+              <stop offset="100%" stopColor="#002FA7" />
             </linearGradient>
 
             {/*
               Radial gradient for the sun disc soft halo glow.
-              Uses #FBC56A (sun.300) with opacities corresponding to the glow intensity.
+              Uses electric cobalt with opacities corresponding to the glow intensity.
             */}
             <radialGradient id="sun-glow" cx="50%" cy="50%" r="50%">
-              <stop offset="0%" stopColor="rgba(251, 197, 106, 0.6)" />
-              <stop offset="100%" stopColor="rgba(251, 197, 106, 0)" />
+              <stop offset="0%" stopColor="rgba(0, 56, 255, 0.55)" />
+              <stop offset="100%" stopColor="rgba(0, 56, 255, 0)" />
             </radialGradient>
           </defs>
 
@@ -59,7 +59,7 @@ export default function RisingSunGauge({ pct, lost, remaining }: RisingSunGaugeP
             y1="105"
             x2="190"
             y2="105"
-            stroke="#EBDBC6"
+            stroke="#EDEAE2"
             strokeWidth="1"
             opacity="0.5"
           />
@@ -67,7 +67,7 @@ export default function RisingSunGauge({ pct, lost, remaining }: RisingSunGaugeP
           {/* Background track: #F6EADA -> cream.200 */}
           <path
             d="M 15 105 A 85 85 0 0 1 185 105"
-            stroke="#F6EADA"
+            stroke="#F7F5F0"
             strokeWidth="10"
             strokeLinecap="round"
             fill="none"
@@ -100,8 +100,8 @@ export default function RisingSunGauge({ pct, lost, remaining }: RisingSunGaugeP
             cx={sunX}
             cy={sunY}
             r="7"
-            fill="#FBC56A"
-            stroke="#FFFCF8"
+            fill="#0038FF"
+            stroke="#FDFDFC"
             strokeWidth="2"
             className="transition-all duration-700 ease-out"
           />
@@ -109,7 +109,7 @@ export default function RisingSunGauge({ pct, lost, remaining }: RisingSunGaugeP
 
         {/* Center Percentage Display */}
         <div className="absolute bottom-6 left-1/2 -translate-x-1/2 text-center select-none">
-          <div className="font-display text-5xl sm:text-6xl font-semibold text-ink tabular-nums">
+          <div className="font-mono text-5xl sm:text-6xl font-semibold text-ink tabular-nums tracking-tight">
             {Math.round(clampedPct)}%
           </div>
           <div className="text-xs text-ink-soft mt-0.5 font-medium uppercase tracking-wide">

@@ -62,8 +62,8 @@ export default function ProjectionChart({
   const horizonMonths = Math.floor(horizonWeeks / WEEKS_PER_MONTH);
 
   const ariaLabel = goalWithinRange
-    ? `Projection chart. Starting at ${Math.round(startKg)} kilograms, trial averages project about ${Math.round(lowProjection)} to ${Math.round(highProjection)} kilograms over roughly ${horizonMonths} months. Your goal of ${Math.round(targetKg)} kilograms could be reached within this range. Individual results vary \u2014 not medical advice.`
-    : `Projection chart. Starting at ${Math.round(startKg)} kilograms, trial averages project about ${Math.round(lowProjection)} to ${Math.round(highProjection)} kilograms over roughly ${horizonMonths} months. Your goal of ${Math.round(targetKg)} kilograms is further than trial averages reached. Individual results vary \u2014 not medical advice.`;
+    ? `Projection chart. Starting at ${Math.round(startKg)} kilograms, trial averages project about ${Math.round(lowProjection)} to ${Math.round(highProjection)} kilograms over roughly ${horizonMonths} months. Your goal of ${Math.round(targetKg)} kilograms could be reached within this range. Individual results vary, not medical advice.`
+    : `Projection chart. Starting at ${Math.round(startKg)} kilograms, trial averages project about ${Math.round(lowProjection)} to ${Math.round(highProjection)} kilograms over roughly ${horizonMonths} months. Your goal of ${Math.round(targetKg)} kilograms is further than trial averages reached. Individual results vary, not medical advice.`;
 
   const visibleMonths = MONTH_MARKERS.filter(
     (m) => m * WEEKS_PER_MONTH <= horizonWeeks * 1.05,
@@ -101,7 +101,7 @@ export default function ProjectionChart({
         x={W - PAD.right}
         y={goalY - 6}
         textAnchor="end"
-        className="fill-accent-500"
+        className="fill-accent-500 font-mono"
         fontSize="10"
       >
         Goal &middot; {Math.round(targetKg)}&nbsp;kg
@@ -114,7 +114,7 @@ export default function ProjectionChart({
       <text
         x={xOf(0) + 8}
         y={yOf(startKg) + 4}
-        className="fill-ink"
+        className="fill-ink font-mono"
         fontSize="10"
       >
         Today &middot; {Math.round(startKg)}&nbsp;kg
@@ -138,7 +138,7 @@ export default function ProjectionChart({
           x={xOf(m * WEEKS_PER_MONTH)}
           y={H - 6}
           textAnchor="middle"
-          className="fill-ink-muted"
+          className="fill-ink-muted font-mono"
           fontSize="9"
         >
           Mo&nbsp;{m}

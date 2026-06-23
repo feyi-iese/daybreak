@@ -32,6 +32,7 @@ describe('WheelPicker component', () => {
     onChange: vi.fn(),
     formatValue: (v: number) => `${v}`,
     ariaLabel: 'Test Picker',
+    unit: 'kg',
   };
 
   beforeEach(() => {

@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 /* =====================================================================
-   Dawn / New Horizon — base layer
+   Dawn / New Horizon - base layer
    ===================================================================== */
 @layer base {
   html {
@@ -12,18 +12,18 @@
 
   body {
     @apply min-h-screen bg-cream-100 font-sans text-ink antialiased;
-    /* Subtle sunrise wash, fixed so it stays put while content scrolls. */
+    /* Clean ambient vignette: faint cobalt haze over bone, fixed on scroll. */
     background-image: radial-gradient(
         120% 80% at 50% -10%,
-        rgba(255, 196, 150, 0.35),
+        rgba(0, 47, 167, 0.06),
         transparent 60%
       ),
       radial-gradient(
         100% 60% at 88% 0%,
-        rgba(255, 138, 99, 0.12),
+        rgba(0, 56, 255, 0.04),
         transparent 55%
       ),
-      linear-gradient(180deg, #fff7ee 0%, #fdf4ea 42%, #fbf1e6 100%);
+      linear-gradient(180deg, #fdfdfc 0%, #fbfbf9 45%, #f7f5f0 100%);
     background-attachment: fixed;
     background-repeat: no-repeat;
     -webkit-font-smoothing: antialiased;
@@ -39,6 +39,7 @@
   /* Numbers in the display serif read better with lining/tabular figures. */
   .font-display {
     font-feature-settings: 'lnum' 1, 'tnum' 1;
+    letter-spacing: -0.01em;
   }
 
   /* Respect users who prefer less motion: neutralise all animation. */
@@ -51,11 +52,26 @@
       transition-duration: 0.001ms !important;
       scroll-behavior: auto !important;
     }
+    /* The grain texture is purely decorative; drop it for reduced-motion users. */
+    .noise-overlay {
+      display: none !important;
+    }
+  }
+
+  /* Remove number-input spinners app-wide; the design supplies its own affordances. */
+  input[type='number']::-webkit-outer-spin-button,
+  input[type='number']::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  input[type='number'] {
+    -moz-appearance: textfield;
+    appearance: textfield;
   }
 }
 
 /* =====================================================================
-   Dawn / New Horizon — component catalog
+   Dawn / New Horizon - component catalog
    These classes are the handoff surface for ProfileForm & Dashboard.
    ===================================================================== */
 @layer components {
@@ -66,20 +82,30 @@
   .app-main {
     @apply mx-auto w-full max-w-xl;
   }
-  /* Soft floating sun glow behind the content (decorative). */
+  /* Soft floating cobalt glow (decorative). */
   .sun-glow {
-    @apply pointer-events-none fixed left-1/2 top-[-7rem] -z-10 h-72 w-72 -translate-x-1/2 rounded-full bg-accent-200/40 blur-3xl;
+    @apply pointer-events-none fixed left-1/2 top-[-7rem] -z-10 h-72 w-72 -translate-x-1/2 rounded-full bg-primary-200/35 blur-3xl;
+  }
+  /* Fine film grain over the page to break digital flatness (decorative). */
+  .noise-overlay {
+    @apply pointer-events-none fixed inset-0 -z-10;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    background-repeat: repeat;
+    background-size: 160px 160px;
+    opacity: 0.04;
+    mix-blend-mode: multiply;
   }
   .wordmark {
     @apply inline-flex items-center gap-2 font-display text-lg font-semibold tracking-tight text-ink;
   }
-  .wordmark-dot {
-    @apply inline-block h-2.5 w-2.5 rounded-full bg-accent-400 shadow-glow;
-  }
 
   /* ---- Surfaces ----------------------------------------------------- */
   .card {
-    @apply rounded-3xl border border-cream-300/70 bg-cream-50/90 p-6 shadow-card sm:p-8;
+    @apply rounded-3xl border border-cream-300/50 bg-cream-50/95 p-6 sm:p-8;
+    box-shadow:
+      inset 0 1.5px 0 rgba(255, 255, 255, 0.8),
+      0 2px 4px rgba(28, 27, 26, 0.05),
+      0 14px 32px -10px rgba(28, 27, 26, 0.10);
   }
   .card-quiet {
     @apply rounded-2xl border border-cream-300/60 bg-cream-100/70 p-5;
@@ -90,13 +116,13 @@
     @apply text-xs font-semibold uppercase tracking-[0.18em] text-primary-600;
   }
   .hero-title {
-    @apply font-display text-3xl font-semibold leading-tight text-ink sm:text-4xl;
+    @apply font-display text-3xl font-extrabold leading-tight tracking-tight text-ink sm:text-4xl;
   }
   .hero-sub {
     @apply mt-2 text-base leading-relaxed text-ink-soft;
   }
   .section-title {
-    @apply font-display text-xl font-semibold text-ink;
+    @apply font-display text-xl font-bold tracking-tight text-ink;
   }
   .section-label {
     @apply text-xs font-semibold uppercase tracking-[0.14em] text-ink-muted;
@@ -104,15 +130,15 @@
 
   /* ---- Buttons ------------------------------------------------------ */
   .btn {
-    @apply inline-flex items-center justify-center gap-2 rounded-2xl px-5 py-3 text-sm font-semibold transition duration-200 ease-out focus:outline-none focus-visible:ring-4 focus-visible:ring-primary-300/50 disabled:cursor-not-allowed disabled:opacity-50;
+    @apply inline-flex items-center justify-center gap-2 rounded-2xl px-5 py-3 text-sm font-semibold transition duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] focus:outline-none focus-visible:ring-4 focus-visible:ring-primary-300/50 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50 disabled:active:scale-100;
   }
   /* Primary: teal sheen, soft glow, gentle hover lift. */
   .btn-primary {
-    @apply btn bg-primary-sheen text-cream-50 shadow-glow-primary hover:-translate-y-0.5 hover:shadow-lift active:translate-y-0 disabled:translate-y-0 disabled:shadow-none;
+    @apply btn bg-primary-sheen text-cream-50 shadow-glow-primary hover:-translate-y-0.5 hover:shadow-lift active:translate-y-[1px] disabled:translate-y-0 disabled:shadow-none;
   }
   /* Accent: joyful coral CTA. */
   .btn-accent {
-    @apply btn bg-accent-sheen text-white shadow-glow hover:-translate-y-0.5 hover:shadow-lift active:translate-y-0 disabled:translate-y-0 disabled:shadow-none;
+    @apply btn bg-accent-sheen text-cream-50 shadow-glow hover:-translate-y-0.5 hover:shadow-lift active:translate-y-[1px] disabled:translate-y-0 disabled:shadow-none;
   }
   /* Ghost / secondary: quiet outline. */
   .btn-ghost {
@@ -127,12 +153,12 @@
     @apply text-sm font-medium text-ink-soft;
   }
   .field-input {
-    @apply w-full rounded-2xl border border-cream-300 bg-cream-50 px-4 py-3 text-base text-ink shadow-inner-soft transition placeholder:text-ink-muted focus:border-primary-400 focus:outline-none focus:ring-4 focus:ring-primary-300/40;
+    @apply w-full rounded-2xl border border-cream-300 bg-cream-50 px-4 py-3 text-base text-ink shadow-inner-soft transition duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] placeholder:text-ink-muted hover:border-cream-300/80 focus:border-primary-400 focus:outline-none focus:ring-4 focus:ring-primary-300/40;
   }
   /* Select: shares the input look + a warm chevron, room on the right. */
   .field-select {
     @apply field-input cursor-pointer appearance-none bg-no-repeat pr-11;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%236A6157' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23514E4A' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
     background-position: right 0.9rem center;
     background-size: 1rem;
   }
@@ -145,7 +171,7 @@
     @apply inline-flex rounded-2xl border border-cream-300 bg-cream-100 p-1;
   }
   .segmented-option {
-    @apply rounded-xl px-4 py-2 text-sm font-medium text-ink-soft transition;
+    @apply rounded-xl px-4 py-2 text-sm font-medium text-ink-soft transition duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:text-ink active:scale-[0.98];
   }
   .segmented-option--active {
     @apply bg-cream-50 text-ink shadow-soft;
@@ -179,7 +205,7 @@
     @apply text-xs font-medium uppercase tracking-wide text-ink-muted;
   }
   .stat-value {
-    @apply mt-1 font-display text-3xl font-semibold leading-none text-ink;
+    @apply mt-1 font-display text-3xl font-bold leading-none tracking-tight text-ink;
   }
   .stat-unit {
     @apply ml-1 text-base font-medium text-ink-soft;
@@ -202,5 +228,16 @@
   }
   .footnote {
     @apply text-xs leading-relaxed text-ink-muted;
+  }
+
+  /* ---- Numeric inputs: strip native spinners ----------------------- */
+  .no-spinner {
+    -moz-appearance: textfield;       /* Firefox */
+    appearance: textfield;            /* standard */
+  }
+  .no-spinner::-webkit-outer-spin-button,
+  .no-spinner::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
   }
 }

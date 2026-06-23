@@ -2,6 +2,12 @@ import type { Dose, FeelingLog, VitalLog, WeighIn } from '../../db/db';
 import { formatWeight } from '../../lib/units';
 import { formatDateKey } from '../../lib/dateUtils';
 import { formatInjectionSite } from '../../lib/medications';
+import happyIcon from '../../assets/happy.png';
+import unhappyIcon from '../../assets/unhappy.png';
+import weightIcon from '../../assets/weight.png';
+import medicineIcon from '../../assets/medicine.png';
+import vitalsIcon from '../../assets/vitals.png';
+import sunriseEmptyIcon from '../../assets/sunrise-empty_state.png';
 
 interface DayDetailProps {
   selectedDate: Date;
@@ -48,30 +54,45 @@ export default function DayDetail({
       <div className="space-y-4">
         {/* Doses */}
         {doses.map((dose) => (
-          <div key={dose.id} className="card-quiet flex items-center justify-between p-4">
-            <div className="flex flex-col">
-              <span className="text-base font-semibold text-ink">
-                💊 Dose: {dose.dosageMg} mg
-                {dose.injectionSite && dose.injectionSite !== 'None' ? ` (${formatInjectionSite(dose.injectionSite)})` : ''}
+          <div key={dose.id} className="card-quiet flex items-center justify-between gap-3 p-4">
+            <div className="flex items-start gap-3">
+              <span
+                className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl bg-primary-50 shadow-inner-soft"
+                aria-hidden="true"
+              >
+                <img src={medicineIcon} alt="" className="h-5.5 w-5.5 object-contain" />
               </span>
-              <span className="footnote mt-1">
-                {dose.name}
-                {dose.takenAt ? (
-                  <> &middot; Taken at {new Date(dose.takenAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</>
-                ) : null}
-              </span>
+              <div className="flex flex-col">
+                <span className="text-base font-semibold text-ink">
+                  Dose: <span className="font-mono tabular-nums">{dose.dosageMg}</span> mg
+                  {dose.injectionSite && dose.injectionSite !== 'None'
+                    ? ` (${formatInjectionSite(dose.injectionSite)})`
+                    : ''}
+                </span>
+                <span className="footnote mt-1">
+                  {dose.name}
+                  {dose.takenAt ? (
+                    <>
+                      {' '}&middot; Taken at{' '}
+                      <span className="font-mono tabular-nums">
+                        {new Date(dose.takenAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                      </span>
+                    </>
+                  ) : null}
+                </span>
+              </div>
             </div>
             <div className="flex gap-2">
               <button
                 onClick={() => onTriggerLog('dose')}
-                className="btn btn-ghost text-xs py-1 px-2.5 rounded-lg"
+                className="btn btn-ghost rounded-lg px-2.5 py-1 text-xs active:scale-95"
                 type="button"
               >
                 Edit
               </button>
               <button
                 onClick={() => dose.id && onDeleteLog('dose', dose.id)}
-                className="btn btn-ghost text-xs py-1 px-2.5 rounded-lg text-tone-rose-ink hover:bg-tone-rose-soft"
+                className="btn btn-ghost rounded-lg px-2.5 py-1 text-xs text-tone-rose-ink hover:bg-tone-rose-soft active:scale-95"
                 type="button"
               >
                 Delete
@@ -83,29 +104,39 @@ export default function DayDetail({
         {/* Feeling */}
         {feeling && (
           <div className="card-quiet flex flex-col p-4">
-            <div className="flex items-center justify-between w-full">
-              <div className="flex flex-col">
-                <span className="text-base font-semibold text-ink">
-                  😊 Feelings:{' '}
-                  {feeling.symptoms.length === 0
-                    ? 'Feeling great!'
-                    : feeling.symptoms.join(', ')}
+            <div className="flex w-full items-start justify-between gap-3">
+              <div className="flex items-start gap-3">
+                <span
+                  className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl bg-accent-50 shadow-inner-soft"
+                  aria-hidden="true"
+                >
+                  <img
+                    src={feeling.symptoms.length === 0 ? happyIcon : unhappyIcon}
+                    alt=""
+                    className="h-5.5 w-5.5 object-contain"
+                  />
                 </span>
-                {feeling.severity && feeling.symptoms.length > 0 && (
-                  <span className="footnote mt-0.5">Severity: {feeling.severity}</span>
-                )}
+                <div className="flex flex-col">
+                  <span className="text-base font-semibold text-ink">
+                    Feelings:{' '}
+                    {feeling.symptoms.length === 0 ? 'Feeling great!' : feeling.symptoms.join(', ')}
+                  </span>
+                  {feeling.severity && feeling.symptoms.length > 0 && (
+                    <span className="footnote mt-0.5 capitalize">Severity: {feeling.severity}</span>
+                  )}
+                </div>
               </div>
               <div className="flex gap-2">
                 <button
                   onClick={() => onTriggerLog('feeling')}
-                  className="btn btn-ghost text-xs py-1 px-2.5 rounded-lg"
+                  className="btn btn-ghost rounded-lg px-2.5 py-1 text-xs active:scale-95"
                   type="button"
                 >
                   Edit
                 </button>
                 <button
                   onClick={() => feeling.id && onDeleteLog('feeling', feeling.id)}
-                  className="btn btn-ghost text-xs py-1 px-2.5 rounded-lg text-tone-rose-ink hover:bg-tone-rose-soft"
+                  className="btn btn-ghost rounded-lg px-2.5 py-1 text-xs text-tone-rose-ink hover:bg-tone-rose-soft active:scale-95"
                   type="button"
                 >
                   Delete
@@ -113,7 +144,7 @@ export default function DayDetail({
               </div>
             </div>
             {feeling.note && (
-              <div className="mt-3 p-3 bg-cream-50 rounded-xl border border-cream-300 text-sm text-ink-soft italic">
+              <div className="mt-3 rounded-xl border border-cream-300 bg-cream-50 p-3 text-sm italic text-ink-soft">
                 &ldquo;{feeling.note}&rdquo;
               </div>
             )}
@@ -122,47 +153,55 @@ export default function DayDetail({
 
         {/* Vitals */}
         {vital && (
-          <div className="card-quiet flex items-center justify-between p-4">
-            <div className="flex flex-col space-y-1">
-              <span className="text-base font-semibold text-ink">❤️ Vitals Logged</span>
-              <div className="flex flex-wrap gap-x-3 gap-y-1 text-sm text-ink-soft mt-1">
-                {vital.bloodSugar && (
-                  <span>
-                    Sugar: <strong className="text-ink">{vital.bloodSugar}</strong> mg/dL
-                  </span>
-                )}
-                {vital.bloodPressureSystolic && vital.bloodPressureDiastolic && (
-                  <span>
-                    BP:{' '}
-                    <strong className="text-ink">
-                      {vital.bloodPressureSystolic}/{vital.bloodPressureDiastolic}
-                    </strong>{' '}
-                    mmHg
-                  </span>
-                )}
-                {vital.heartRate && (
-                  <span>
-                    HR: <strong className="text-ink">{vital.heartRate}</strong> bpm
-                  </span>
-                )}
-                {vital.waistCircumferenceCm && (
-                  <span>
-                    Waist: <strong className="text-ink">{vital.waistCircumferenceCm}</strong> cm
-                  </span>
-                )}
+          <div className="card-quiet flex items-center justify-between gap-3 p-4">
+            <div className="flex items-start gap-3">
+              <span
+                className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl bg-tone-rose-soft shadow-inner-soft"
+                aria-hidden="true"
+              >
+                <img src={vitalsIcon} alt="" className="h-5.5 w-5.5 object-contain" />
+              </span>
+              <div className="flex flex-col space-y-1">
+                <span className="text-base font-semibold text-ink">Vitals logged</span>
+                <div className="mt-1 flex flex-wrap gap-x-3 gap-y-1 text-sm text-ink-soft">
+                  {vital.bloodSugar && (
+                    <span>
+                      Sugar: <strong className="font-mono tabular-nums text-ink">{vital.bloodSugar}</strong> mg/dL
+                    </span>
+                  )}
+                  {vital.bloodPressureSystolic && vital.bloodPressureDiastolic && (
+                    <span>
+                      BP:{' '}
+                      <strong className="font-mono tabular-nums text-ink">
+                        {vital.bloodPressureSystolic}/{vital.bloodPressureDiastolic}
+                      </strong>{' '}
+                      mmHg
+                    </span>
+                  )}
+                  {vital.heartRate && (
+                    <span>
+                      HR: <strong className="font-mono tabular-nums text-ink">{vital.heartRate}</strong> bpm
+                    </span>
+                  )}
+                  {vital.waistCircumferenceCm && (
+                    <span>
+                      Waist: <strong className="font-mono tabular-nums text-ink">{vital.waistCircumferenceCm}</strong> cm
+                    </span>
+                  )}
+                </div>
               </div>
             </div>
             <div className="flex gap-2">
               <button
                 onClick={() => onTriggerLog('vital')}
-                className="btn btn-ghost text-xs py-1 px-2.5 rounded-lg"
+                className="btn btn-ghost rounded-lg px-2.5 py-1 text-xs active:scale-95"
                 type="button"
               >
                 Edit
               </button>
               <button
                 onClick={() => vital.id && onDeleteLog('vital', vital.id)}
-                className="btn btn-ghost text-xs py-1 px-2.5 rounded-lg text-tone-rose-ink hover:bg-tone-rose-soft"
+                className="btn btn-ghost rounded-lg px-2.5 py-1 text-xs text-tone-rose-ink hover:bg-tone-rose-soft active:scale-95"
                 type="button"
               >
                 Delete
@@ -173,26 +212,37 @@ export default function DayDetail({
 
         {/* Weight */}
         {weighIn && (
-          <div className="card-quiet flex items-center justify-between p-4">
-            <div className="flex flex-col">
-              <span className="text-base font-semibold text-ink">
-                ⚖️ Weight: {formatWeight(weighIn.weightKg, weightUnit)}
+          <div className="card-quiet flex items-center justify-between gap-3 p-4">
+            <div className="flex items-start gap-3">
+              <span
+                className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl bg-tone-sun-soft shadow-inner-soft"
+                aria-hidden="true"
+              >
+                <img src={weightIcon} alt="" className="h-5.5 w-5.5 object-contain" />
               </span>
-              <span className="footnote mt-1">
-                Logged {new Date(weighIn.at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-              </span>
+              <div className="flex flex-col">
+                <span className="text-base font-semibold text-ink">
+                  Weight: <span className="font-mono tabular-nums">{formatWeight(weighIn.weightKg, weightUnit)}</span>
+                </span>
+                <span className="footnote mt-1">
+                  Logged{' '}
+                  <span className="font-mono tabular-nums">
+                    {new Date(weighIn.at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                  </span>
+                </span>
+              </div>
             </div>
             <div className="flex gap-2">
               <button
                 onClick={() => onTriggerLog('weight')}
-                className="btn btn-ghost text-xs py-1 px-2.5 rounded-lg"
+                className="btn btn-ghost rounded-lg px-2.5 py-1 text-xs active:scale-95"
                 type="button"
               >
                 Edit
               </button>
               <button
                 onClick={() => weighIn.id && onDeleteLog('weight', weighIn.id)}
-                className="btn btn-ghost text-xs py-1 px-2.5 rounded-lg text-tone-rose-ink hover:bg-tone-rose-soft"
+                className="btn btn-ghost rounded-lg px-2.5 py-1 text-xs text-tone-rose-ink hover:bg-tone-rose-soft active:scale-95"
                 type="button"
               >
                 Delete
@@ -203,9 +253,15 @@ export default function DayDetail({
 
         {/* Empty State */}
         {!hasAnyLogs && (
-          <p className="hero-sub text-center py-4 italic text-ink-muted">
-            Nothing logged for this day yet. Ready to capture your progress?
-          </p>
+          <div className="flex flex-col items-center justify-center py-8 text-center animate-fade-rise">
+            <img
+              src={sunriseEmptyIcon}
+              alt=""
+              className="h-28 w-28 object-contain mb-4"
+            />
+            <p className="text-sm text-ink-soft">Nothing logged for this day yet.</p>
+            <p className="footnote">Use the quick add below to capture your progress.</p>
+          </div>
         )}
       </div>
 
@@ -216,7 +272,7 @@ export default function DayDetail({
           {doses.length === 0 && (
             <button
               onClick={() => onTriggerLog('dose')}
-              className="btn btn-ghost py-2 px-4 rounded-full text-sm font-medium border border-cream-300"
+              className="btn btn-ghost py-2 px-4 rounded-full text-sm font-medium border border-cream-300 active:scale-[0.97]"
               type="button"
             >
               + Log Dose
@@ -225,7 +281,7 @@ export default function DayDetail({
           {!feeling && (
             <button
               onClick={() => onTriggerLog('feeling')}
-              className="btn btn-ghost py-2 px-4 rounded-full text-sm font-medium border border-cream-300"
+              className="btn btn-ghost py-2 px-4 rounded-full text-sm font-medium border border-cream-300 active:scale-[0.97]"
               type="button"
             >
               + Log Feelings
@@ -234,7 +290,7 @@ export default function DayDetail({
           {!vital && (
             <button
               onClick={() => onTriggerLog('vital')}
-              className="btn btn-ghost py-2 px-4 rounded-full text-sm font-medium border border-cream-300"
+              className="btn btn-ghost py-2 px-4 rounded-full text-sm font-medium border border-cream-300 active:scale-[0.97]"
               type="button"
             >
               + Log Vitals
@@ -243,7 +299,7 @@ export default function DayDetail({
           {!weighIn && (
             <button
               onClick={() => onTriggerLog('weight')}
-              className="btn btn-ghost py-2 px-4 rounded-full text-sm font-medium border border-cream-300"
+              className="btn btn-ghost py-2 px-4 rounded-full text-sm font-medium border border-cream-300 active:scale-[0.97]"
               type="button"
             >
               + Log Weight

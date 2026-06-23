@@ -185,15 +185,18 @@ export default function Calendar({
                 }}
                 onKeyDown={(e) => handleKeyDown(e, idx)}
                 tabIndex={isSelected ? 0 : -1}
-                className={`w-10 h-10 mx-auto flex flex-col items-center justify-center rounded-full transition relative focus:outline-none focus:ring-2 focus:ring-primary-300
-                  ${!isCurrentMonth ? 'text-ink-muted opacity-50' : 'text-ink'}
-                  ${isToday && !isSelected ? 'border border-primary-500 font-bold' : ''}
-                  ${isSelected ? 'bg-primary-500 text-cream-50 font-bold shadow-soft' : 'hover:bg-primary-50'}
+                className={`relative mx-auto flex h-11 w-11 flex-col items-center justify-center rounded-2xl transition duration-200 ease-out focus:outline-none focus-visible:ring-4 focus-visible:ring-primary-300/50 active:scale-90
+                  ${isToday && !isSelected ? 'ring-1 ring-inset ring-primary-400 font-semibold' : ''}
+                  ${
+                    isSelected
+                      ? 'bg-primary-sheen text-cream-50 font-semibold shadow-glow-primary'
+                      : `${!isCurrentMonth ? 'text-ink-muted/60' : 'text-ink'} hover:-translate-y-0.5 hover:bg-primary-50`
+                  }
                 `}
                 aria-label={ariaLabelParts.join(', ')}
                 type="button"
               >
-                <span className="text-sm">{day.date.getDate()}</span>
+                <span className="font-mono text-sm tabular-nums leading-none">{day.date.getDate()}</span>
 
                 {/* Indicator Dots */}
                 <div className="absolute bottom-1 left-0 right-0 flex justify-center gap-0.5 h-1">

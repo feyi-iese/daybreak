@@ -5,76 +5,77 @@ export default {
     extend: {
       // ---- Dawn / New Horizon palette ----------------------------------
       colors: {
-        // Warm neutral surfaces (cream / warm-white). Never pure #fff.
+        // Bone / Alabaster surfaces. Never pure #fff.
         cream: {
-          50: '#FFFCF8',
-          100: '#FCF6EE',
-          200: '#F6EADA',
-          300: '#EBDBC6',
-          400: '#D9C3A6',
+          50:  '#FDFDFC', // lightest bone, card faces and rims
+          100: '#FBFBF9', // base bone white, app background top
+          200: '#F7F5F0', // alabaster, quiet surfaces and tracks
+          300: '#EDEAE2', // sand edge, borders and hairlines
+          400: '#DAD5C9', // deep oat, strong dividers and disabled fills
         },
-        // Warm near-black ink for text. Never pure #000.
+        // Graphite / Charcoal text. Never pure #000.
         ink: {
-          DEFAULT: '#2C2722',
-          soft: '#6A6157',
-          muted: '#9C9186',
+          DEFAULT: '#1C1B1A', // graphite, primary text
+          soft:    '#514E4A', // mid graphite, secondary text
+          muted:   '#8A8780', // stone, tertiary text and axis labels
         },
-        // Confident teal/emerald — growth, vitality, "go".
+        // Royal Cobalt Blue
         primary: {
-          50: '#E8F8F3',
-          100: '#C7EEE4',
-          200: '#97DECD',
-          300: '#5FC9B3',
-          400: '#2BB29A',
-          500: '#129B86',
-          600: '#0C8071',
-          700: '#0A655A',
-          800: '#094E46',
+          50:  '#EDF0FB', // faint cobalt haze, tinted fills
+          100: '#D4DCF7', // chip backgrounds
+          200: '#A6B6EE', // soft cobalt, rings and band fills
+          300: '#6E86E2', // mid cobalt, hover borders, chart edges
+          400: '#2F55D4', // strong cobalt, focus borders
+          500: '#0038FF', // electric cobalt, active states, glow, gauge bead
+          600: '#002FA7', // royal cobalt (Klein), default brand, buttons
+          700: '#00257E', // deep cobalt, pressed and emphasis text
+          800: '#001A57', // ink-cobalt, deepest accents
         },
-        // Warm coral — joyful CTAs and glow.
+        // Botanical Sage (muted secondary, "the goal / wellness")
         accent: {
-          50: '#FFF1EB',
-          100: '#FFDCCF',
-          200: '#FFBCA1',
-          300: '#FF9874',
-          400: '#FF7A53',
-          500: '#F65F3B',
-          600: '#DC4A29',
+          50:  '#EFF4F1',
+          100: '#D8E5DE',
+          200: '#B3CDBF',
+          300: '#84AC97',
+          400: '#5C8B74',
+          500: '#467259',
+          600: '#355A45',
         },
-        // Warm amber sun — secondary accent / highlights.
+        // Apothecary Brass (muted tertiary, retained key name)
         sun: {
-          300: '#FBC56A',
-          400: '#F6A93B',
-          500: '#E8901C',
+          300: '#D9C18A',
+          400: '#C2A65F',
+          500: '#A8893F',
         },
-        // Dignified, muted category tones (never alarm-red).
-        'tone-sky': { soft: '#E8F1F8', ink: '#2F6C8F', edge: '#CFE1EE' },
-        'tone-mint': { soft: '#E3F4EF', ink: '#0C8071', edge: '#C6E8DF' },
-        'tone-sun': { soft: '#FAF0DA', ink: '#946410', edge: '#F0E0BB' },
-        'tone-rose': { soft: '#FBEAE4', ink: '#B0584C', edge: '#F2D4CC' },
+        // Dignified BMI category tones (recolored to cool/apothecary)
+        'tone-sky':  { soft: '#EDF0FB', ink: '#002FA7', edge: '#D4DCF7' },
+        'tone-mint': { soft: '#EFF4F1', ink: '#355A45', edge: '#D8E5DE' },
+        'tone-sun':  { soft: '#F6EFDD', ink: '#7A6321', edge: '#EBDFC2' },
+        'tone-rose': { soft: '#F4ECEC', ink: '#8A5350', edge: '#E7D7D5' },
       },
       fontFamily: {
-        display: ['Fraunces', 'ui-serif', 'Georgia', 'serif'],
-        sans: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+        display: ['Geist', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+        sans: ['Geist', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+        mono: ['Geist Mono', 'ui-monospace', 'monospace'],
       },
       // Soft, layered, warm-tinted shadows (warm umber base 67,42,20).
       boxShadow: {
-        soft: '0 1px 2px rgba(67,42,20,0.04), 0 4px 12px rgba(67,42,20,0.05)',
-        card: '0 2px 4px rgba(67,42,20,0.05), 0 14px 32px -10px rgba(67,42,20,0.12)',
-        lift: '0 12px 24px -8px rgba(67,42,20,0.14), 0 28px 56px -18px rgba(67,42,20,0.18)',
-        glow: '0 10px 26px -8px rgba(255,122,83,0.50)',
-        'glow-primary': '0 10px 26px -8px rgba(18,155,134,0.42)',
-        'inner-soft': 'inset 0 1px 2px rgba(67,42,20,0.05)',
+        soft:           '0 1px 2px rgba(28,27,26,0.04), 0 4px 12px rgba(28,27,26,0.05)',
+        card:           '0 2px 4px rgba(28,27,26,0.05), 0 14px 32px -10px rgba(28,27,26,0.10)',
+        lift:           '0 12px 24px -8px rgba(28,27,26,0.12), 0 28px 56px -18px rgba(28,27,26,0.16)',
+        glow:           '0 10px 26px -8px rgba(0,56,255,0.40)',   // electric cobalt
+        'glow-primary': '0 10px 26px -8px rgba(0,47,167,0.36)',   // royal cobalt
+        'inner-soft':   'inset 0 1px 2px rgba(28,27,26,0.05)',
       },
       borderRadius: {
         '4xl': '2rem',
       },
       backgroundImage: {
-        // Subtle sunrise wash for the page (also applied to body in base).
+        // Soft, clean ambient vignette: faint cobalt haze settling over bone.
         dawn:
-          'radial-gradient(120% 80% at 50% -10%, rgba(255,196,150,0.35), transparent 60%), radial-gradient(100% 60% at 88% 0%, rgba(255,138,99,0.12), transparent 55%), linear-gradient(180deg, #FFF7EE 0%, #FDF4EA 42%, #FBF1E6 100%)',
-        'primary-sheen': 'linear-gradient(135deg, #16A892 0%, #0C7C6D 100%)',
-        'accent-sheen': 'linear-gradient(135deg, #FF8A63 0%, #F65F3B 100%)',
+          'radial-gradient(120% 80% at 50% -10%, rgba(0,47,167,0.06), transparent 60%), radial-gradient(100% 60% at 88% 0%, rgba(0,56,255,0.04), transparent 55%), linear-gradient(180deg, #FDFDFC 0%, #FBFBF9 45%, #F7F5F0 100%)',
+        'primary-sheen': 'linear-gradient(135deg, #0038FF 0%, #002FA7 100%)', // electric -> royal cobalt
+        'accent-sheen':  'linear-gradient(135deg, #5C8B74 0%, #467259 100%)', // sage
       },
       keyframes: {
         'fade-rise': {
@@ -90,8 +91,8 @@ export default {
           '100%': { backgroundPosition: '150% 0' },
         },
         'glow-pulse': {
-          '0%, 100%': { boxShadow: '0 10px 26px -8px rgba(255,122,83,0.35)' },
-          '50%': { boxShadow: '0 14px 34px -8px rgba(255,122,83,0.55)' },
+          '0%, 100%': { boxShadow: '0 10px 26px -8px rgba(0,56,255,0.32)' },
+          '50%':      { boxShadow: '0 14px 34px -8px rgba(0,56,255,0.52)' },
         },
       },
       animation: {

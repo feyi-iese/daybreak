@@ -6,6 +6,24 @@ import MainHub from './components/MainHub';
 
 // Local (non-exported) page chrome: dawn background, centered column,
 // wordmark header, and a gentle entrance for the active screen.
+function Logo({ className }: { className?: string }) {
+  return (
+    <svg
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className={className}
+      aria-hidden="true"
+    >
+      <line x1="4" y1="18" x2="20" y2="18" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" opacity="0.3" />
+      <path d="M7 18C7 13.0294 11.0294 9 16 9" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" />
+      <circle cx="16" cy="9" r="2.2" fill="currentColor" />
+    </svg>
+  );
+}
+
 function Shell({ screen, children }: { screen: string; children: ReactNode }) {
   return (
     <div className="app-shell">
@@ -13,10 +31,9 @@ function Shell({ screen, children }: { screen: string; children: ReactNode }) {
       <div className="app-main">
         <header className="mb-8 flex items-center justify-between">
           <span className="wordmark">
-            <span className="wordmark-dot" aria-hidden="true" />
+            <Logo className="text-primary-600 h-6 w-6" />
             Daybreak
           </span>
-          <span className="hero-eyebrow">New horizon</span>
         </header>
         <main key={screen} className="animate-fade-rise">
           {children}

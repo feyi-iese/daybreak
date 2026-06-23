@@ -242,4 +242,105 @@ describe('Onboarding flow', () => {
     expect(hist).toBeDefined();
     expect(hist!.weightKg).toBe(100);
   });
+
+  it('supports typing mode inputs, decimal entry, and backspacing without traps', async () => {
+    const user = userEvent.setup();
+    render(<App />);
+
+    // Step 1: Welcome
+    await user.click(await screen.findByRole('button', { name: /let.s begin/i }));
+
+    // Step 2: Disclaimer
+    await user.click(await screen.findByRole('switch'));
+    await user.click(screen.getByRole('button', { name: /continue/i }));
+
+    // Step 3: Gender
+    await user.click(await screen.findByRole('radio', { name: /female/i }));
+    await user.click(screen.getByRole('button', { name: /continue/i }));
+
+    // Step 4: Height
+    expect(await screen.findByText(/how tall are you/i)).toBeInTheDocument();
+    
+    // Click the center element of the wheel picker to trigger typing mode
+    const heightCenter = screen.getByText('170 cm');
+    await user.click(heightCenter);
+
+    // Height input in cm should appear, displaying 170
+    const heightInput = screen.getByRole('spinbutton', { name: /^height$/i });
+    expect(heightInput).toBeInTheDocument();
+    expect(heightInput).toHaveValue(170);
+
+    // Clear and change to 182 cm
+    await user.clear(heightInput);
+    await user.type(heightInput, '182');
+    fireEvent.blur(heightInput);
+    expect(heightInput).toHaveValue(182);
+
+    await user.click(screen.getByRole('button', { name: /continue/i }));
+
+    // Step 5: Weight
+    expect(await screen.findByText(/what.s your weight today/i)).toBeInTheDocument();
+
+    // Click the center element of the wheel picker to trigger typing mode
+    const weightCenter = screen.getByText('80 kg');
+    await user.click(weightCenter);
+
+    // Today's weight input should display 80
+    const todayWeightInput = screen.getByRole('spinbutton', { name: /today's weight/i });
+    expect(todayWeightInput).toBeInTheDocument();
+    expect(todayWeightInput).toHaveValue(80);
+
+    // Toggle unit to lb (which will exit edit mode)
+    const lbBtn = screen.getByRole('radio', { name: /lb/i });
+    await user.click(lbBtn);
+
+    // Click the center of the wheel in lb mode to edit again
+    const weightCenterLb = screen.getByText('176 lb');
+    await user.click(weightCenterLb);
+
+    // The new input should display 176
+    const todayWeightInputLb = screen.getByRole('spinbutton', { name: /today's weight/i });
+    expect(todayWeightInputLb).toBeInTheDocument();
+    expect(todayWeightInputLb).toHaveValue(176);
+
+    // Test backspace trap (should be able to clear input completely)
+    await user.clear(todayWeightInputLb);
+    expect(todayWeightInputLb).toHaveValue(null);
+
+    // Test decimal trap (should support typing decimals like 175.5)
+    await user.type(todayWeightInputLb, '175.5');
+    expect(todayWeightInputLb).toHaveValue(175.5);
+
+    fireEvent.blur(todayWeightInputLb);
+    
+    // Continue
+    await user.click(screen.getByRole('button', { name: /continue/i }));
+
+    // Step 6: Goal weight
+    expect(await screen.findByText(/where would you like to get to/i)).toBeInTheDocument();
+
+    // Click the center element of the wheel picker to trigger typing mode
+    const goalCenter = screen.getByText('159 lb');
+    await user.click(goalCenter);
+
+    const goalWeightInput = screen.getByRole('spinbutton', { name: /goal weight/i });
+    expect(goalWeightInput).toBeInTheDocument();
+    // Clear and change goal weight to 160 (lb)
+    await user.clear(goalWeightInput);
+    await user.type(goalWeightInput, '160');
+    fireEvent.blur(goalWeightInput);
+
+    await user.click(screen.getByRole('button', { name: /continue/i }));
+
+    // Step 7: Privacy
+    await user.click(await screen.findByRole('button', { name: /save my plan/i }));
+
+    // Verify DB Profile values
+    const profile = await db.profile.toArray();
+    expect(profile).toHaveLength(1);
+    expect(profile[0].heightCm).toBe(182);
+    // 175.5 lb converts to ~79.6 kg, rounded to 79.5 kg
+    expect(profile[0].startingWeightKg).toBe(80);
+    expect(profile[0].targetWeightKg).toBe(72.5); // 160 lb converts to ~72.57 kg, rounded to 72.5 kg
+  });
 });

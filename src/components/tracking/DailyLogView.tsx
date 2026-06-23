@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import type { Profile, Dose, FeelingLog, VitalLog, WeighIn } from '../../db/db';
 import { getLogsForDay } from '../../db/logs';
 import { addDose, updateDose, deleteDose, getDosesForRange } from '../../db/doses';
@@ -31,6 +31,12 @@ export default function DailyLogView({ profile }: DailyLogViewProps) {
 
   // Modal control
   const [activeModal, setActiveModal] = useState<'dose' | 'feeling' | 'vital' | 'weight' | null>(null);
+
+  // Custom delete confirmation (replaces native window.confirm)
+  const [pendingDelete, setPendingDelete] = useState<{
+    category: 'dose' | 'feeling' | 'vital' | 'weight';
+    id: number;
+  } | null>(null);
 
   // Fetch all logs for current month grid to render dots
   const fetchMonthLogs = useCallback(async () => {
@@ -131,16 +137,22 @@ export default function DailyLogView({ profile }: DailyLogViewProps) {
     await Promise.all([fetchDayLogs(), fetchMonthLogs()]);
   };
 
-  // Handle Delete
+  // Handle Delete: stage a confirmation instead of a native browser dialog.
   const handleDeleteLog = async (category: 'dose' | 'feeling' | 'vital' | 'weight', id: number) => {
-    const confirmDelete = window.confirm('Are you sure you want to delete this entry?');
-    if (!confirmDelete) return;
+    setPendingDelete({ category, id });
+  };
+
+  const performDelete = async () => {
+    if (!pendingDelete) return;
+    const { category, id } = pendingDelete;
 
     if (category === 'dose') await deleteDose(id);
     if (category === 'feeling') await deleteFeeling(id);
     if (category === 'vital') await deleteVital(id);
     if (category === 'weight') await deleteWeighIn(id);
 
+    setPendingDelete(null);
+    setActiveModal(null);
     await Promise.all([fetchDayLogs(), fetchMonthLogs()]);
   };
 
@@ -206,6 +218,105 @@ export default function DailyLogView({ profile }: DailyLogViewProps) {
         onSave={handleSaveWeight}
         onDelete={weighIn?.id ? () => handleDeleteLog('weight', weighIn.id!) : undefined}
       />
+
+      {/* Delete confirmation (custom, no native dialog) */}
+      <ConfirmDialog
+        isOpen={pendingDelete !== null}
+        category={pendingDelete?.category ?? null}
+        onCancel={() => setPendingDelete(null)}
+        onConfirm={performDelete}
+      />
+    </div>
+  );
+}
+
+const DELETE_LABELS: Record<'dose' | 'feeling' | 'vital' | 'weight', string> = {
+  dose: 'dose',
+  feeling: 'feelings entry',
+  vital: 'vitals entry',
+  weight: 'weight entry',
+};
+
+interface ConfirmDialogProps {
+  isOpen: boolean;
+  category: 'dose' | 'feeling' | 'vital' | 'weight' | null;
+  onCancel: () => void;
+  onConfirm: () => void | Promise<void>;
+}
+
+function ConfirmDialog({ isOpen, category, onCancel, onConfirm }: ConfirmDialogProps) {
+  const confirmRef = useRef<HTMLButtonElement | null>(null);
+
+  useEffect(() => {
+    if (!isOpen) return;
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onCancel();
+    };
+    window.addEventListener('keydown', handleEscape);
+    // Move focus onto the safe (cancel) action when the dialog opens.
+    const t = window.setTimeout(() => confirmRef.current?.focus(), 20);
+    return () => {
+      window.removeEventListener('keydown', handleEscape);
+      window.clearTimeout(t);
+    };
+  }, [isOpen, onCancel]);
+
+  if (!isOpen) return null;
+
+  const label = category ? DELETE_LABELS[category] : 'entry';
+
+  return (
+    <div className="fixed inset-0 z-[60] flex items-end justify-center bg-ink/40 p-4 backdrop-blur-sm sm:items-center">
+      <div className="absolute inset-0" onClick={onCancel} aria-hidden="true" />
+      <div
+        className="card relative z-10 w-full max-w-sm animate-fade-rise"
+        role="alertdialog"
+        aria-modal="true"
+        aria-labelledby="confirm-title"
+        aria-describedby="confirm-body"
+      >
+        <div className="flex items-start gap-4">
+          <span
+            className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-2xl bg-tone-rose-soft text-tone-rose-ink shadow-inner-soft"
+            aria-hidden="true"
+          >
+            <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+              />
+            </svg>
+          </span>
+          <div className="flex flex-col">
+            <h3 id="confirm-title" className="section-title text-lg text-ink">
+              Delete this {label}?
+            </h3>
+            <p id="confirm-body" className="mt-1.5 text-sm leading-relaxed text-ink-soft">
+              This permanently removes the logged data for this day. You can always log it again later.
+            </p>
+          </div>
+        </div>
+
+        <div className="mt-6 flex justify-end gap-2">
+          <button
+            ref={confirmRef}
+            onClick={onCancel}
+            className="btn btn-ghost rounded-2xl px-4 py-2.5 text-sm active:scale-[0.97]"
+            type="button"
+          >
+            Keep it
+          </button>
+          <button
+            onClick={() => void onConfirm()}
+            className="btn rounded-2xl bg-tone-rose-ink px-4 py-2.5 text-sm font-semibold text-cream-50 shadow-soft transition hover:brightness-105 focus-visible:ring-4 focus-visible:ring-tone-rose-edge active:scale-[0.97] active:translate-y-px"
+            type="button"
+          >
+            Delete entry
+          </button>
+        </div>
+      </div>
     </div>
   );
 }

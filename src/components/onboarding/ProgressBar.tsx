@@ -14,7 +14,7 @@ export default function ProgressBar({ progress }: ProgressBarProps) {
       aria-label="Onboarding progress"
     >
       <div
-        className="journey-fill transition-all duration-500 ease-out"
+        className="journey-fill shadow-[0_0_8px_rgba(18,155,134,0.45)] transition-[width] duration-500 ease-out"
         style={{ width: `${pct}%` }}
       />
     </div>

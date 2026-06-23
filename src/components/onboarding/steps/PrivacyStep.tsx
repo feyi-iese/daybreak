@@ -14,7 +14,7 @@ export default function PrivacyStep({
       onBack={onBack}
       eyebrow="Your data, your rules"
       title="Everything stays on this device"
-      subtitle="Daybreak has no accounts and no servers. Your details, your weight, your whole journey live only in this browser, on this device — never uploaded, never sold, never shared."
+      subtitle="Daybreak has no accounts and no servers. Your details, your weight, your whole journey live only in this browser, on this device. Never uploaded, never sold, never shared."
       ctaLabel="Save my plan"
       ctaVariant="accent"
       onCtaClick={onNext}
