@@ -1,4 +1,4 @@
-import { computeBmi, classifyBmi } from '../bmi';
+import { computeBmi, classifyBmi, BMI_THRESHOLDS, weightForBmi } from '../bmi';
 
 describe('computeBmi', () => {
   it('computes a clean value: 100 kg / 200 cm = 25', () => {
@@ -63,6 +63,25 @@ describe('classifyBmi', () => {
 
     it('35 -> Obese', () => {
       expect(classifyBmi(35)).toBe('Obese');
+    });
+  });
+});
+
+describe('weightForBmi and BMI_THRESHOLDS', () => {
+  it('calculates weight correctly for a given BMI and height', () => {
+    expect(weightForBmi(25, 200)).toBeCloseTo(100, 10);
+  });
+
+  it('round-trips with computeBmi correctly', () => {
+    const weight = weightForBmi(25, 200);
+    expect(computeBmi(weight, 200)).toBeCloseTo(25, 10);
+  });
+
+  it('asserts BMI_THRESHOLDS match WHO standard definitions', () => {
+    expect(BMI_THRESHOLDS).toEqual({
+      normal: 18.5,
+      overweight: 25,
+      obese: 30,
     });
   });
 });
