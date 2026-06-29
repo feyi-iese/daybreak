@@ -29,13 +29,13 @@ function Shell({
       <div className="sun-glow animate-float" aria-hidden="true" />
       <div className="app-main">
         {!hideHeader && (
-          <header className="mb-8 grid grid-cols-[1fr_auto_1fr] items-center gap-3">
-            <span aria-hidden="true" />
-            <span className="wordmark justify-self-center">
+          <header className="mb-8 grid grid-cols-[1fr_auto] justify-between items-center gap-3">
+            {/* <span aria-hidden="true" /> */}
+            <span className="wordmark ">
               <Logo className="text-primary-600 h-12 w-12" />
               Daybreak
             </span>
-            <div className="justify-self-end">
+            <div className="">
               <ThemePreferenceControl
                 themePreference={themePreference}
                 resolvedTheme={resolvedTheme}
