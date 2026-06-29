@@ -129,7 +129,6 @@ export default function OnboardingFlow({
     return loadDraftFromStorage() ?? defaultDraft();
   });
   const [committing, setCommitting] = useState(false);
-
   // Mirror draft to localStorage in create mode
   useEffect(() => {
     if (mode === 'create') {

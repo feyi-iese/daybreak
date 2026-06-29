@@ -38,9 +38,9 @@ export default function RisingSunGauge({ pct, lost, remaining }: RisingSunGaugeP
               - #002FA7 -> primary.600 royal cobalt
             */}
             <linearGradient id="sun-arc-grad" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" stopColor="#6E86E2" />
-              <stop offset="50%" stopColor="#0038FF" />
-              <stop offset="100%" stopColor="#002FA7" />
+              <stop offset="0%" stopColor="rgba(var(--c-primary-300), 1)" />
+              <stop offset="50%" stopColor="rgba(var(--c-primary-500), 1)" />
+              <stop offset="100%" stopColor="rgba(var(--c-primary-600), 1)" />
             </linearGradient>
 
             {/*
@@ -48,8 +48,8 @@ export default function RisingSunGauge({ pct, lost, remaining }: RisingSunGaugeP
               Uses electric cobalt with opacities corresponding to the glow intensity.
             */}
             <radialGradient id="sun-glow" cx="50%" cy="50%" r="50%">
-              <stop offset="0%" stopColor="rgba(0, 56, 255, 0.55)" />
-              <stop offset="100%" stopColor="rgba(0, 56, 255, 0)" />
+              <stop offset="0%" stopColor="rgba(var(--c-primary-500), 0.55)" />
+              <stop offset="100%" stopColor="rgba(var(--c-primary-500), 0)" />
             </radialGradient>
           </defs>
 
@@ -59,7 +59,7 @@ export default function RisingSunGauge({ pct, lost, remaining }: RisingSunGaugeP
             y1="105"
             x2="190"
             y2="105"
-            stroke="#EDEAE2"
+            stroke="rgba(var(--c-cream-300), 1)"
             strokeWidth="1"
             opacity="0.5"
           />
@@ -67,7 +67,7 @@ export default function RisingSunGauge({ pct, lost, remaining }: RisingSunGaugeP
           {/* Background track: #F6EADA -> cream.200 */}
           <path
             d="M 15 105 A 85 85 0 0 1 185 105"
-            stroke="#F7F5F0"
+            stroke="rgba(var(--c-cream-200), 1)"
             strokeWidth="10"
             strokeLinecap="round"
             fill="none"
@@ -100,8 +100,8 @@ export default function RisingSunGauge({ pct, lost, remaining }: RisingSunGaugeP
             cx={sunX}
             cy={sunY}
             r="7"
-            fill="#0038FF"
-            stroke="#FDFDFC"
+            fill="rgba(var(--c-primary-500), 1)"
+            stroke="rgba(var(--c-cream-50), 1)"
             strokeWidth="2"
             className="transition-all duration-700 ease-out"
           />

@@ -38,7 +38,7 @@ export default function StepShell({
             type="button"
             onClick={onBack}
             aria-label="Go back"
-            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-cream-300 bg-cream-50 text-ink-soft shadow-soft transition-all duration-200 ease-out hover:-translate-x-0.5 hover:border-primary-300 hover:text-ink active:scale-95 focus:outline-none focus-visible:ring-4 focus-visible:ring-primary-300/50"
+            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-cream-300 bg-cream-50 text-ink-soft dark:bg-cream-50 dark:text-ink-soft dark:border-cream-300 shadow-soft transition-all duration-200 ease-out hover:-translate-x-0.5 hover:border-primary-300 hover:text-ink active:scale-95 focus:outline-none focus-visible:ring-4 focus-visible:ring-primary-300/50"
           >
             <svg
               width="18"

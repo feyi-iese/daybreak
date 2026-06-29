@@ -27,7 +27,7 @@ function ModalWrapper({ isOpen, onClose, title, subtitle, onDelete, children }: 
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-ink/40 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center p-4 transition-opacity">
+    <div className="fixed inset-0 modal-scrim backdrop-blur-sm z-50 flex items-end sm:items-center justify-center p-4 transition-opacity">
       {/* Click outside to close */}
       <div className="absolute inset-0" onClick={onClose} aria-hidden="true" />
 
@@ -48,7 +48,7 @@ function ModalWrapper({ isOpen, onClose, title, subtitle, onDelete, children }: 
           </div>
           <button
             onClick={onClose}
-            className="btn btn-ghost p-1 rounded-full text-ink-soft hover:bg-cream-200"
+            className="btn btn-ghost p-1 rounded-full text-ink-soft hover:bg-cream-200 dark:hover:bg-cream-200/80"
             aria-label="Close modal"
             type="button"
           >
@@ -214,15 +214,15 @@ export function DoseModal({ isOpen, onClose, selectedDate, initialData, onSave, 
                 className={`w-full flex items-center justify-between px-4 py-3 rounded-2xl border text-left transition active:scale-[0.98] focus-visible:ring-2 focus-visible:ring-primary-300/50
                   ${
                     medication === med.id
-                      ? 'bg-primary-500 text-cream-50 border-primary-500 shadow-glow-primary'
-                      : 'border-cream-300 text-ink hover:bg-cream-100'
+                      ? 'bg-primary-500 text-cream-50 dark:text-ink border-primary-500 shadow-glow-primary'
+                      : 'border-cream-300 text-ink hover:bg-cream-100 dark:hover:bg-cream-200/80'
                   }`}
               >
                 <div>
                   <span className="font-semibold text-sm">{med.brand}</span>
                   <span
                     className={`block text-xs ${
-                      medication === med.id ? 'text-cream-100/80' : 'text-ink-muted'
+                      medication === med.id ? 'text-cream-100/80 dark:text-ink-soft' : 'text-ink-muted'
                     }`}
                   >
                     {med.generic}
@@ -247,8 +247,8 @@ export function DoseModal({ isOpen, onClose, selectedDate, initialData, onSave, 
               className={`w-full flex items-center justify-between px-4 py-3 rounded-2xl border text-left transition active:scale-[0.98] focus-visible:ring-2 focus-visible:ring-primary-300/50
                 ${
                   medication === 'Other'
-                    ? 'bg-primary-500 text-cream-50 border-primary-500 shadow-glow-primary'
-                    : 'border-cream-300 text-ink hover:bg-cream-100'
+                    ? 'bg-primary-500 text-cream-50 dark:text-ink border-primary-500 shadow-glow-primary'
+                    : 'border-cream-300 text-ink hover:bg-cream-100 dark:hover:bg-cream-200/80'
                 }`}
             >
               <span className="font-semibold text-sm">Other</span>
@@ -277,8 +277,8 @@ export function DoseModal({ isOpen, onClose, selectedDate, initialData, onSave, 
                   className={`py-2.5 px-3 text-sm font-semibold rounded-xl border transition active:scale-[0.97] focus-visible:ring-2 focus-visible:ring-primary-300/50
                     ${
                       dosage === d
-                        ? 'bg-primary-500 text-cream-50 border-primary-500 shadow-glow-primary'
-                        : 'border-cream-300 text-ink hover:bg-cream-100'
+                        ? 'bg-primary-500 text-cream-50 dark:text-ink border-primary-500 shadow-glow-primary'
+                        : 'border-cream-300 text-ink hover:bg-cream-100 dark:hover:bg-cream-200/80'
                     }
                   `}
                 >
@@ -334,8 +334,8 @@ export function DoseModal({ isOpen, onClose, selectedDate, initialData, onSave, 
                         className={`py-2 px-2 text-xs font-semibold rounded-xl border transition active:scale-[0.97] focus-visible:ring-2 focus-visible:ring-primary-300/50
                           ${
                             site === s.value
-                              ? 'bg-primary-500 text-cream-50 border-primary-500 shadow-glow-primary'
-                              : 'border-cream-300 text-ink hover:bg-cream-100'
+                              ? 'bg-primary-500 text-cream-50 dark:text-ink border-primary-500 shadow-glow-primary'
+                              : 'border-cream-300 text-ink hover:bg-cream-100 dark:hover:bg-cream-200/80'
                           }
                         `}
                       >
@@ -357,8 +357,8 @@ export function DoseModal({ isOpen, onClose, selectedDate, initialData, onSave, 
                 className={`w-full py-2.5 px-3 text-sm font-semibold rounded-xl border transition active:scale-[0.97] focus-visible:ring-2 focus-visible:ring-primary-300/50
                   ${
                     site === 'None'
-                      ? 'bg-primary-500 text-cream-50 border-primary-500 shadow-glow-primary'
-                      : 'border-cream-300 text-ink hover:bg-cream-100'
+                      ? 'bg-primary-500 text-cream-50 dark:text-ink border-primary-500 shadow-glow-primary'
+                      : 'border-cream-300 text-ink hover:bg-cream-100 dark:hover:bg-cream-200/80'
                   }
                 `}
               >
@@ -482,7 +482,7 @@ export function FeelingModal({ isOpen, onClose, selectedDate, initialData, onSav
                 ${
                   isFeelingGreat
                     ? 'bg-tone-mint-soft text-tone-mint-ink border-tone-mint-edge'
-                    : 'border-cream-300 text-ink hover:bg-cream-100'
+                    : 'border-cream-300 text-ink hover:bg-cream-100 dark:hover:bg-cream-200/80'
                 }
               `}
             >
@@ -499,7 +499,7 @@ export function FeelingModal({ isOpen, onClose, selectedDate, initialData, onSav
                     ${
                       isChecked
                         ? 'bg-tone-rose-soft text-tone-rose-ink border-tone-rose-edge'
-                        : 'border-cream-300 text-ink hover:bg-cream-100'
+                        : 'border-cream-300 text-ink hover:bg-cream-100 dark:hover:bg-cream-200/80'
                     }
                   `}
                 >

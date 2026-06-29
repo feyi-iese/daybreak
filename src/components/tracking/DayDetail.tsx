@@ -128,7 +128,7 @@ export default function DayDetail({
                 </div>
               </div>
               {feeling.note && (
-                <div className="mt-3 rounded-xl border border-cream-300 bg-cream-50 p-3 text-sm italic text-ink-soft">
+                <div className="mt-3 rounded-xl border border-cream-300 bg-cream-50 dark:bg-cream-100/85 dark:border-cream-300/60 dark:text-ink-soft p-3 text-sm italic text-ink-soft">
                   &ldquo;{feeling.note}&rdquo;
                 </div>
               )}
@@ -479,10 +479,9 @@ function SwipeableLogCard({
     >
       {id && (
         <div
-          className={`absolute inset-y-0 right-0 flex w-[5.5rem] items-center justify-center bg-tone-rose-ink text-cream-50 ${
+          className={`absolute inset-y-0 right-0 flex w-[5.5rem] items-center justify-center bg-tone-rose-ink text-cream-50 dark:text-ink ${
             offset === 0 ? 'invisible' : ''
           }`}
-          aria-hidden={!isRevealed}
         >
           <button
             ref={deleteButtonRef}
@@ -508,7 +507,7 @@ function SwipeableLogCard({
         onPointerUp={handlePointerUp}
         onPointerCancel={handlePointerCancel}
         aria-describedby={id ? hintId : undefined}
-        className={`card-quiet relative w-full cursor-pointer p-4 text-left hover:border-primary-200/70 hover:bg-cream-100/90 focus:outline-none focus-visible:ring-inset focus-visible:ring-4 focus-visible:ring-primary-300/50 touch-pan-y ${
+        className={`card-quiet relative w-full cursor-pointer p-4 text-left hover:border-primary-200/70 hover:bg-cream-100/90 dark:hover:bg-cream-200/70 focus:outline-none focus-visible:ring-inset focus-visible:ring-4 focus-visible:ring-primary-300/50 touch-pan-y ${
           !isDragging ? 'transition-[transform,background-color,border-color] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)]' : ''
         }`}
         style={{ transform: `translateX(${offset}px)` }}

@@ -40,7 +40,7 @@ export default function MainHub({ profile, onEdit }: MainHubProps) {
           aria-selected={activeTab === 'log'}
           onClick={() => setActiveTab('log')}
           className={`segmented-option flex-1 flex items-center justify-center py-2.5 text-sm font-semibold rounded-2xl ${
-            activeTab === 'log' ? 'segmented-option--active text-primary-600 bg-cream-50 shadow-sm' : 'text-ink-soft'
+            activeTab === 'log' ? 'segmented-option--active text-primary-600 bg-cream-50 shadow-sm dark:bg-cream-50 dark:text-primary-700 dark:shadow-none' : 'text-ink-soft'
           }`}
           type="button"
         >
@@ -51,7 +51,7 @@ export default function MainHub({ profile, onEdit }: MainHubProps) {
           aria-selected={activeTab === 'journey'}
           onClick={() => setActiveTab('journey')}
           className={`segmented-option flex-1 flex items-center justify-center py-2.5 text-sm font-semibold rounded-2xl ${
-            activeTab === 'journey' ? 'segmented-option--active text-primary-600 bg-cream-50 shadow-sm' : 'text-ink-soft'
+            activeTab === 'journey' ? 'segmented-option--active text-primary-600 bg-cream-50 shadow-sm dark:bg-cream-50 dark:text-primary-700 dark:shadow-none' : 'text-ink-soft'
           }`}
           type="button"
         >
@@ -62,7 +62,7 @@ export default function MainHub({ profile, onEdit }: MainHubProps) {
           aria-selected={activeTab === 'bmi'}
           onClick={() => setActiveTab('bmi')}
           className={`segmented-option flex-1 flex items-center justify-center py-2.5 text-sm font-semibold rounded-2xl ${
-            activeTab === 'bmi' ? 'segmented-option--active text-primary-600 bg-cream-50 shadow-sm' : 'text-ink-soft'
+            activeTab === 'bmi' ? 'segmented-option--active text-primary-600 bg-cream-50 shadow-sm dark:bg-cream-50 dark:text-primary-700 dark:shadow-none' : 'text-ink-soft'
           }`}
           type="button"
         >
@@ -73,7 +73,7 @@ export default function MainHub({ profile, onEdit }: MainHubProps) {
           aria-selected={activeTab === 'projections'}
           onClick={() => setActiveTab('projections')}
           className={`segmented-option flex-1 flex items-center justify-center py-2.5 text-sm font-semibold rounded-2xl ${
-            activeTab === 'projections' ? 'segmented-option--active text-primary-600 bg-cream-50 shadow-sm' : 'text-ink-soft'
+            activeTab === 'projections' ? 'segmented-option--active text-primary-600 bg-cream-50 shadow-sm dark:bg-cream-50 dark:text-primary-700 dark:shadow-none' : 'text-ink-soft'
           }`}
           type="button"
         >

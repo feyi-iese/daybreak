@@ -266,7 +266,7 @@ function ConfirmDialog({ isOpen, category, onCancel, onConfirm }: ConfirmDialogP
   const label = category ? DELETE_LABELS[category] : 'entry';
 
   return (
-    <div className="fixed inset-0 z-[60] flex items-end justify-center bg-ink/40 p-4 backdrop-blur-sm sm:items-center">
+    <div className="fixed inset-0 z-[60] flex items-end justify-center modal-scrim p-4 backdrop-blur-sm sm:items-center">
       <div className="absolute inset-0" onClick={onCancel} aria-hidden="true" />
       <div
         className="card relative z-10 w-full max-w-sm animate-fade-rise"
@@ -310,7 +310,7 @@ function ConfirmDialog({ isOpen, category, onCancel, onConfirm }: ConfirmDialogP
           </button>
           <button
             onClick={() => void onConfirm()}
-            className="btn rounded-2xl bg-tone-rose-ink px-4 py-2.5 text-sm font-semibold text-cream-50 shadow-soft transition hover:brightness-105 focus-visible:ring-4 focus-visible:ring-tone-rose-edge active:scale-[0.97] active:translate-y-px"
+            className="btn rounded-2xl bg-tone-rose-ink px-4 py-2.5 text-sm font-semibold text-cream-50 dark:text-ink shadow-soft transition hover:brightness-105 focus-visible:ring-4 focus-visible:ring-tone-rose-edge active:scale-[0.97] active:translate-y-px"
             type="button"
           >
             Delete entry

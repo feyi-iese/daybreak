@@ -51,16 +51,16 @@ export default function BmiCalculator({ profile, currentWeightKg }: BmiCalculato
   const cardClasses = {
     Underweight: simulatedCategory === 'Underweight'
       ? 'border-tone-sky-edge bg-tone-sky-soft/40 shadow-sm ring-1 ring-tone-sky-edge'
-      : 'border-cream-200 bg-cream-50/30',
+      : 'border-cream-200 bg-cream-50/30 dark:bg-cream-100/60',
     Normal: simulatedCategory === 'Normal'
       ? 'border-tone-mint-edge bg-tone-mint-soft/40 shadow-sm ring-1 ring-tone-mint-edge'
-      : 'border-cream-200 bg-cream-50/30',
+      : 'border-cream-200 bg-cream-50/30 dark:bg-cream-100/60',
     Overweight: simulatedCategory === 'Overweight'
       ? 'border-tone-sun-edge bg-tone-sun-soft/40 shadow-sm ring-1 ring-tone-sun-edge'
-      : 'border-cream-200 bg-cream-50/30',
+      : 'border-cream-200 bg-cream-50/30 dark:bg-cream-100/60',
     Obese: simulatedCategory === 'Obese'
       ? 'border-tone-rose-edge bg-tone-rose-soft/40 shadow-sm ring-1 ring-tone-rose-edge'
-      : 'border-cream-200 bg-cream-50/30',
+      : 'border-cream-200 bg-cream-50/30 dark:bg-cream-100/60',
   };
   const currentBmi = computeBmi(currentWeightKg, profile.heightCm);
 
@@ -235,7 +235,7 @@ export default function BmiCalculator({ profile, currentWeightKg }: BmiCalculato
             </div>
 
             {/* Track with segments */}
-            <div className="h-3 w-full rounded-full overflow-hidden flex bg-cream-100 border border-cream-200">
+            <div className="h-3 w-full rounded-full overflow-hidden flex bg-cream-100 border border-cream-200 dark:bg-cream-100 dark:border-cream-300">
               <div style={{ width: '14%' }} className="h-full bg-tone-sky-soft" />
               <div style={{ width: '26%' }} className="h-full bg-tone-mint-soft" />
               <div style={{ width: '20%' }} className="h-full bg-tone-sun-soft" />
@@ -312,7 +312,7 @@ export default function BmiCalculator({ profile, currentWeightKg }: BmiCalculato
             <p className="footnote mt-4 border-t border-cream-200/60 pt-3">
               Current BMI: {currentBmi.toFixed(1)} at {formatWeight(currentWeightKg, unit)}
             </p>
-            <p className="text-xs leading-relaxed text-ink-soft mt-3 bg-cream-50/50 p-3 rounded-xl border border-cream-100">
+            <p className="text-xs leading-relaxed text-ink-soft mt-3 bg-cream-50/50 dark:bg-cream-100/80 p-3 rounded-xl border border-cream-100 dark:border-cream-300/60">
               {getExplanation()}
             </p>
           </div>

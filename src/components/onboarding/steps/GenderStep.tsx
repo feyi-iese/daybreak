@@ -47,11 +47,11 @@ export default function GenderStep({
               className={`flex items-center justify-between rounded-2xl border px-5 py-4 text-left transition-all duration-200 ease-out active:scale-[0.99] focus:outline-none focus-visible:ring-4 focus-visible:ring-primary-300/40 ${
                 selected
                   ? 'border-primary-300 bg-primary-50 shadow-glow-primary'
-                  : 'border-cream-300 bg-cream-50 hover:-translate-y-0.5 hover:border-primary-300 hover:shadow-soft'
+                  : 'border-cream-300 bg-cream-50 dark:bg-cream-50 hover:-translate-y-0.5 hover:border-primary-300 hover:shadow-soft'
               }`}
             >
               <span
-                className={`text-base font-medium ${selected ? 'text-primary-700' : 'text-ink'}`}
+                className={`text-base font-medium ${selected ? 'text-primary-700 dark:text-primary-700' : 'text-ink'}`}
               >
                 {opt.label}
               </span>
@@ -59,7 +59,7 @@ export default function GenderStep({
                 aria-hidden="true"
                 className={`flex h-6 w-6 items-center justify-center rounded-full border transition-all duration-200 ease-out ${
                   selected
-                    ? 'border-primary-500 bg-primary-500 text-cream-50'
+                    ? 'border-primary-500 bg-primary-500 text-cream-50 dark:text-ink'
                     : 'border-cream-300 bg-cream-100 text-transparent'
                 }`}
               >

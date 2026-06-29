@@ -161,8 +161,8 @@ export default function WeightProgressChart({ profile, weighIns }: WeightProgres
       >
         <defs>
           <linearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#0038FF" stopOpacity="0.2" />
-            <stop offset="100%" stopColor="#0038FF" stopOpacity="0.0" />
+            <stop offset="0%" stopColor="rgba(var(--c-primary-500), 1)" stopOpacity="0.2" />
+            <stop offset="100%" stopColor="rgba(var(--c-primary-500), 1)" stopOpacity="0.0" />
           </linearGradient>
         </defs>
 

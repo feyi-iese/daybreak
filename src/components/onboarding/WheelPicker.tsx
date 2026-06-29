@@ -271,7 +271,7 @@ export default function WheelPicker({
     (Number.isNaN(draftNum) || draftNum < min || draftNum > max);
 
   const containerClasses = [
-    'group relative flex w-full flex-col items-center justify-center gap-1 rounded-3xl border py-6 outline-none transition-colors duration-200 ease-out bg-cream-100/60',
+    'group relative flex w-full flex-col items-center justify-center gap-1 rounded-3xl border py-6 outline-none transition-colors duration-200 ease-out bg-cream-100/60 dark:bg-cream-100/70',
     editing ? 'cursor-text' : 'touch-none select-none cursor-ns-resize',
     draftInvalid
       ? 'border-tone-rose-edge ring-4 ring-tone-rose-edge/40'
@@ -305,7 +305,7 @@ export default function WheelPicker({
         {!editing && (
           <div
             aria-hidden="true"
-            className="pointer-events-none absolute inset-x-3 top-1/2 h-12 -translate-y-1/2 rounded-2xl bg-cream-50/85 ring-1 ring-primary-200/50 shadow-[inset_0_1.5px_0_rgba(255,255,255,0.7)] transition-colors duration-200 group-hover:ring-primary-300/60"
+            className="pointer-events-none absolute inset-x-3 top-1/2 h-12 -translate-y-1/2 rounded-2xl bg-cream-50/85 dark:bg-cream-200/70 ring-1 ring-primary-200/50 shadow-[inset_0_1.5px_0_rgba(255,255,255,0.7)] dark:shadow-[inset_0_1px_0_rgb(255_255_255_/_0.04)] transition-colors duration-200 group-hover:ring-primary-300/60"
           />
         )}
         {/* Top / bottom fades to fake the wheel curve */}
@@ -329,7 +329,7 @@ export default function WheelPicker({
               return (
                 <label
                   key={offset}
-                  className={`relative z-10 flex items-baseline gap-2 rounded-2xl bg-cream-50/85 px-6 py-2 shadow-[inset_0_1.5px_0_rgba(255,255,255,0.7)] ring-1 transition-colors duration-200 ${
+                  className={`relative z-10 flex items-baseline gap-2 rounded-2xl bg-cream-50/85 dark:bg-cream-200/70 px-6 py-2 shadow-[inset_0_1.5px_0_rgba(255,255,255,0.7)] dark:shadow-[inset_0_1px_0_rgb(255_255_255_/_0.04)] ring-1 transition-colors duration-200 ${
                     draftInvalid ? 'ring-tone-rose-edge' : 'ring-primary-200/60'
                   }`}
                 >

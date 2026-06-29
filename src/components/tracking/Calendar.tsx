@@ -189,7 +189,7 @@ export default function Calendar({
                   ${isToday && !isSelected ? 'ring-1 ring-inset ring-primary-400 font-semibold' : ''}
                   ${
                     isSelected
-                      ? 'bg-primary-sheen text-cream-50 font-semibold shadow-glow-primary'
+                      ? 'bg-primary-sheen text-cream-50 dark:text-ink font-semibold shadow-glow-primary'
                       : `${!isCurrentMonth ? 'text-ink-muted/60' : 'text-ink'} hover:-translate-y-0.5 hover:bg-primary-50`
                   }
                 `}
@@ -202,25 +202,25 @@ export default function Calendar({
                 <div className="absolute bottom-1 left-0 right-0 flex justify-center gap-0.5 h-1">
                   {logs.doses && (
                     <span
-                      className={`w-1 h-1 rounded-full ${isSelected ? 'bg-cream-50' : 'bg-primary-500'}`}
+                      className={`w-1 h-1 rounded-full ${isSelected ? 'bg-cream-50 dark:bg-ink' : 'bg-primary-500'}`}
                       aria-hidden="true"
                     />
                   )}
                   {logs.feelings && (
                     <span
-                      className={`w-1 h-1 rounded-full ${isSelected ? 'bg-cream-50' : 'bg-accent-400'}`}
+                      className={`w-1 h-1 rounded-full ${isSelected ? 'bg-cream-50 dark:bg-ink' : 'bg-accent-400'}`}
                       aria-hidden="true"
                     />
                   )}
                   {logs.vitals && (
                     <span
-                      className={`w-1 h-1 rounded-full ${isSelected ? 'bg-cream-50' : 'bg-sun-400'}`}
+                      className={`w-1 h-1 rounded-full ${isSelected ? 'bg-cream-50 dark:bg-ink' : 'bg-sun-400'}`}
                       aria-hidden="true"
                     />
                   )}
                   {logs.weighIn && (
                     <span
-                      className={`w-1 h-1 rounded-full ${isSelected ? 'bg-cream-50' : 'bg-ink-soft'}`}
+                      className={`w-1 h-1 rounded-full ${isSelected ? 'bg-cream-50 dark:bg-ink' : 'bg-ink-soft'}`}
                       aria-hidden="true"
                     />
                   )}

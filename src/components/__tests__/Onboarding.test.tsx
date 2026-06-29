@@ -1,6 +1,6 @@
 import 'fake-indexeddb/auto';
 
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 import App from '../../App';
@@ -169,8 +169,11 @@ describe('Onboarding flow', () => {
     // Select My Journey tab to show the dashboard
     await user.click(await screen.findByRole('tab', { name: /my journey/i }));
 
-    // Dashboard should reflect the gender change
-    expect(await screen.findByText('Male')).toBeInTheDocument();
+    // Verify database reflects the change
+    await waitFor(async () => {
+      const p = await db.profile.get(1);
+      expect(p?.gender).toBe('male');
+    });
   });
 
   it('supports logging a different starting weight and start date (historical start)', async () => {
@@ -222,18 +225,23 @@ describe('Onboarding flow', () => {
     await user.click(await screen.findByRole('tab', { name: /my journey/i }));
 
     // Verify Dashboard shows Past, Now, and Future metrics
-    expect(screen.getByText('Start (Past)')).toBeInTheDocument();
-    expect(screen.getByText('Current (Now)')).toBeInTheDocument();
-    expect(screen.getByText('Goal (Future)')).toBeInTheDocument();
+    const startLabels = screen.getAllByText('Start');
+    const currentLabels = screen.getAllByText('Current');
+    const goalLabels = screen.getAllByText('Goal');
+
+    expect(startLabels[0]).toBeInTheDocument();
+    expect(currentLabels[0]).toBeInTheDocument();
+    expect(goalLabels[0]).toBeInTheDocument();
 
     // Check displayed values
-    expect(screen.getByText('Start (Past)').parentElement?.textContent).toContain('100');
-    expect(screen.getByText('Current (Now)').parentElement?.textContent).toContain('80');
+    expect(startLabels[0].parentElement?.textContent).toContain('100');
+    expect(currentLabels[0].parentElement?.textContent).toContain('80');
     
     // Verify BMI displays are showing (Starting, Current, Target BMIs)
-    expect(screen.getByText('Starting BMI')).toBeInTheDocument();
-    expect(screen.getByText('Current BMI')).toBeInTheDocument();
-    expect(screen.getByText('Target BMI')).toBeInTheDocument();
+    expect(screen.getByText('Body mass index (BMI)')).toBeInTheDocument();
+    expect(startLabels[1]).toBeInTheDocument();
+    expect(currentLabels[1]).toBeInTheDocument();
+    expect(goalLabels[1]).toBeInTheDocument();
 
     // Check DB weighIns count (1 for start, 1 for today)
     const weighIns = await db.weighIns.toArray();

@@ -46,7 +46,7 @@ export default function DisclaimerStep({
         className={`group mt-6 flex w-full items-center gap-3 rounded-2xl border p-4 text-left transition-all duration-200 ease-out active:scale-[0.99] focus:outline-none focus-visible:ring-4 focus-visible:ring-primary-300/40 ${
           accepted
             ? 'border-primary-300 bg-primary-50'
-            : 'border-cream-300 bg-cream-50 hover:border-primary-300 hover:bg-cream-100'
+            : 'border-cream-300 bg-cream-50 hover:border-primary-300 hover:bg-cream-100 dark:bg-cream-50 dark:hover:bg-cream-200'
         }`}
       >
         <span

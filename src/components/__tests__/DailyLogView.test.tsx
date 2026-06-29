@@ -66,7 +66,8 @@ describe('DailyLogView Integration Flow', () => {
 
     // Verify it is logged on screen
     await waitFor(() => {
-      expect(screen.getByText(/dose:/i)).toHaveTextContent(/dose: 5 mg \(thigh · right\)/i);
+      expect(screen.getByRole('button', { name: /5 mg/i })).toBeInTheDocument();
+      expect(screen.getByText(/thigh · right/i)).toBeInTheDocument();
     });
 
     // Check DB
@@ -79,7 +80,7 @@ describe('DailyLogView Integration Flow', () => {
     expect(screen.queryByRole('button', { name: /^delete$/i })).not.toBeInTheDocument();
 
     // Edit the dose
-    const doseCard = screen.getByRole('button', { name: /dose:\s*5 mg/i });
+    const doseCard = screen.getByRole('button', { name: /5 mg/i });
     await user.click(doseCard);
     const newDosageBtn = screen.getByRole('button', { name: /^7.5 mg$/i });
     await user.click(newDosageBtn);
@@ -89,7 +90,8 @@ describe('DailyLogView Integration Flow', () => {
 
     // Verify updated on screen
     await waitFor(() => {
-      expect(screen.getByText(/dose:/i)).toHaveTextContent(/dose: 7.5 mg \(thigh · right\)/i);
+      expect(screen.getByRole('button', { name: /7.5 mg/i })).toBeInTheDocument();
+      expect(screen.getByText(/thigh · right/i)).toBeInTheDocument();
     });
   });
 
@@ -128,7 +130,8 @@ describe('DailyLogView Integration Flow', () => {
 
     // Verify it is logged on screen
     await waitFor(() => {
-      expect(screen.getByText(/dose:/i)).toHaveTextContent(/dose: 1 mg \(abdomen · upper l\)/i);
+      expect(screen.getByRole('button', { name: /1 mg/i })).toBeInTheDocument();
+      expect(screen.getByText(/abdomen · upper l/i)).toBeInTheDocument();
     });
 
     // Check DB record
@@ -169,7 +172,7 @@ describe('DailyLogView Integration Flow', () => {
     });
 
     // Edit the dose
-    const doseCard = screen.getByRole('button', { name: /dose:\s*2.5 mg/i });
+    const doseCard = screen.getByRole('button', { name: /2.5 mg/i });
     await user.click(doseCard);
 
     // Verify time input is pre-filled with 14:30
@@ -215,7 +218,7 @@ describe('DailyLogView Integration Flow', () => {
 
     // Verify logged on screen
     await waitFor(() => {
-      expect(screen.getByText(/feelings: nausea, fatigue/i)).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: /nausea/i })).toBeInTheDocument();
       expect(screen.getByText(/“felt tired”/i)).toBeInTheDocument();
     });
 
@@ -224,7 +227,7 @@ describe('DailyLogView Integration Flow', () => {
     expect(screen.queryByRole('button', { name: /^delete$/i })).not.toBeInTheDocument();
 
     // Delete it (opens the custom confirm dialog, no native window.confirm)
-    const feelingsCard = screen.getByRole('button', { name: /feelings:\s*nausea, fatigue/i });
+    const feelingsCard = screen.getByRole('button', { name: /nausea/i });
 
     const createPointerEvent = (type: string, props: { clientX: number; clientY: number; pointerId?: number }) => {
       const PointerEventClass = ((typeof PointerEvent !== 'undefined' ? PointerEvent : null) || (typeof MouseEvent !== 'undefined' ? MouseEvent : null) || Event) as new (type: string, dict?: EventInit) => Event;
@@ -263,7 +266,7 @@ describe('DailyLogView Integration Flow', () => {
     await user.click(saveBtn);
 
     // Get the card
-    const feelingsCard = await screen.findByRole('button', { name: /feelings:\s*nausea/i });
+    const feelingsCard = await screen.findByRole('button', { name: /nausea/i });
 
     // Focus and press ArrowLeft
     feelingsCard.focus();
@@ -322,7 +325,7 @@ describe('DailyLogView Integration Flow', () => {
     await user.click(saveBtn);
 
     await waitFor(() => {
-      expect(screen.getByText(/weight:/i)).toHaveTextContent(/weight: 82.5 kg/i);
+      expect(screen.getByRole('button', { name: /82.5 kg/i })).toBeInTheDocument();
     });
   });
 });

@@ -169,7 +169,7 @@ export default function WeightStep({
 
       {/* Conditional Starting Weight and Date Inputs */}
       {draft.hasDifferentStartingWeight && (
-        <div className="mt-6 space-y-4 p-4 rounded-2xl bg-cream-50 border border-cream-300 animate-fade-rise">
+        <div className="mt-6 space-y-4 p-4 rounded-2xl bg-cream-50 dark:bg-cream-100/80 border border-cream-300 dark:border-cream-300/60 animate-fade-rise">
           <p className="hero-eyebrow text-primary-500">Your historical start</p>
 
           {/* Starting weight input */}

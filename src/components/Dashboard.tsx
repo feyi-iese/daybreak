@@ -134,7 +134,7 @@ export default function Dashboard({ profile, currentWeight, weighIns, onEdit }: 
             {formatWeight(Math.abs(profile.startingWeightKg - currentWeight), unit)}       
           </p>
         </div>
-        <div className="card-quiet mt-3 overflow-hidden bg-cream-50/80 p-3 sm:p-4">
+        <div className="card-quiet mt-3 overflow-hidden bg-cream-50/80 dark:bg-cream-100/80 p-3 sm:p-4">
           <WeightProgressChart profile={profile} weighIns={weighIns} />
         </div>
       </div>
