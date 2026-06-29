@@ -53,3 +53,30 @@ describe('MainHub BMI Integration', () => {
     expect(resultGroup).toHaveTextContent('Current BMI: 29.3 at 95.0 kg');
   });
 });
+
+describe('MainHub Journey Integration', () => {
+  it('displays Weight progress section and WeightProgressChart on My Journey tab', async () => {
+    const user = userEvent.setup();
+
+    await addWeighIn({ at: new Date(2026, 0, 1).getTime(), weightKg: 100 });
+    await addWeighIn({ at: new Date(2026, 0, 15).getTime(), weightKg: 97.5 });
+    await addWeighIn({ at: new Date(2026, 1, 1).getTime(), weightKg: 95 });
+
+    const mockProfileWithStartedAtJan1: Profile = {
+      ...mockProfile,
+      startedAt: new Date(2026, 0, 1).getTime(),
+      startingWeightKg: 100,
+    };
+
+    render(<MainHub profile={mockProfileWithStartedAtJan1} onEdit={vi.fn()} />);
+
+    // Click the My Journey tab
+    const journeyTab = await screen.findByRole('tab', { name: /my journey/i });
+    expect(journeyTab).toBeInTheDocument();
+    await user.click(journeyTab);
+
+    // Assert Weight progress section and chart are visible
+    expect(screen.getByText('Weight progress')).toBeInTheDocument();
+    expect(screen.getByRole('img', { name: /weight progress chart/i })).toBeInTheDocument();
+  });
+});

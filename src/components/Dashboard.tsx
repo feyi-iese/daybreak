@@ -1,16 +1,18 @@
 import { computeBmi, classifyBmi } from '../lib/bmi';
 import { getBmiChipClassName } from '../lib/bmiStyles';
-import type { Profile } from '../db/db';
+import type { Profile, WeighIn } from '../db/db';
 import { formatWeight, kgToLb } from '../lib/units';
 import RisingSunGauge from './RisingSunGauge';
+import WeightProgressChart from './WeightProgressChart';
 
 interface DashboardProps {
   profile: Profile;
   currentWeight: number;
+  weighIns: WeighIn[];
   onEdit: () => void;
 }
 
-export default function Dashboard({ profile, currentWeight, onEdit }: DashboardProps) {
+export default function Dashboard({ profile, currentWeight, weighIns, onEdit }: DashboardProps) {
 
 
   const unit = profile.weightUnit || 'kg';
@@ -32,8 +34,8 @@ export default function Dashboard({ profile, currentWeight, onEdit }: DashboardP
   // Percentage of journey complete (clamped between 0 and 100)
   const pct = totalChange > 0 ? Math.max(0, Math.min(100, (currentChange / totalChange) * 100)) : 100;
 
-  const formattedStartDate = new Date(profile.startedAt).toLocaleDateString(undefined, {
-    month: 'short',
+  const formattedStartDate = new Date(profile.startedAt).toLocaleDateString('en-GB', {
+    month: 'numeric',
     day: 'numeric',
     year: 'numeric',
   });
@@ -62,7 +64,7 @@ export default function Dashboard({ profile, currentWeight, onEdit }: DashboardP
       </div>
 
       {/* ---- The inputs you entered ---- */}
-      <div className="mt-10">
+      {/* <div className="mt-10">
         <h2 className="section-label">Your details</h2>
         <div className="mt-3 grid grid-cols-2 gap-3">
           <div className="stat transition-all duration-300 ease-out hover:-translate-y-0.5 hover:shadow-soft">
@@ -79,14 +81,14 @@ export default function Dashboard({ profile, currentWeight, onEdit }: DashboardP
             </p>
           </div>
         </div>
-      </div>
+      </div> */}
 
       {/* ---- Journey Weight Milestones (Past, Now, Future) ---- */}
       <div className="mt-8">
         <h2 className="section-label">Weight milestones</h2>
         <div className="mt-3 grid grid-cols-3 gap-2">
           <div className="stat transition-all duration-300 ease-out hover:-translate-y-0.5 hover:shadow-soft">
-            <p className="stat-label">Start (Past)</p>
+            <p className="stat-label">Start</p>
             <p className="stat-value text-xl font-semibold sm:text-2xl">
               <span className="font-mono tabular-nums">
                 {unit === 'lb' ? Math.round(kgToLb(profile.startingWeightKg)) : profile.startingWeightKg}
@@ -96,7 +98,7 @@ export default function Dashboard({ profile, currentWeight, onEdit }: DashboardP
             <p className="footnote mt-1 font-mono">{formattedStartDate}</p>
           </div>
           <div className="stat transition-all duration-300 ease-out hover:-translate-y-0.5 hover:shadow-soft">
-            <p className="stat-label">Current (Now)</p>
+            <p className="stat-label">Current</p>
             <p className="stat-value text-xl font-semibold sm:text-2xl">
               <span className="font-mono tabular-nums">
                 {unit === 'lb' ? Math.round(kgToLb(currentWeight)) : currentWeight}
@@ -106,7 +108,7 @@ export default function Dashboard({ profile, currentWeight, onEdit }: DashboardP
             <p className="footnote mt-1">Today</p>
           </div>
           <div className="stat shadow-glow ring-2 ring-accent-200 transition-all duration-300 ease-out hover:-translate-y-0.5">
-            <p className="stat-label">Goal (Future)</p>
+            <p className="stat-label">Goal</p>
             <p className="stat-value text-xl font-semibold text-accent-500 sm:text-2xl">
               <span className="font-mono tabular-nums">
                 {unit === 'lb' ? Math.round(kgToLb(profile.targetWeightKg)) : profile.targetWeightKg}
@@ -118,12 +120,30 @@ export default function Dashboard({ profile, currentWeight, onEdit }: DashboardP
         </div>
       </div>
 
+      {/* ---- Journey Weight Progress Chart ---- */}
+      <div className="mt-8">
+        <div className="flex items-end justify-between gap-3">
+          <div>
+            <h2 className="section-label">Weight progress</h2>
+            {/* <p className="footnote mt-1">Date by date, from your start to your latest log.</p> */}
+          </div>
+          <p className="text-right text-xs font-semibold text-primary-600">
+            <span className="text-base uppercase tracking-wide px-1.5">
+              {currentWeight < profile.startingWeightKg ? '↓' : currentWeight > profile.startingWeightKg ? '↑' : '↔'}
+            </span>
+            {formatWeight(Math.abs(profile.startingWeightKg - currentWeight), unit)}       
+          </p>
+        </div>
+        <div className="card-quiet mt-3 overflow-hidden bg-cream-50/80 p-3 sm:p-4">
+          <WeightProgressChart profile={profile} weighIns={weighIns} />
+        </div>
+      </div>
       {/* ---- BMI readings, each with its tonal category chip ---- */}
       <div className="mt-8">
-        <h2 className="section-label">Body mass index</h2>
+        <h2 className="section-label">Body mass index (BMI)</h2>
         <div className="mt-3 grid grid-cols-3 gap-2">
           <div className="stat transition-all duration-300 ease-out hover:-translate-y-0.5 hover:shadow-soft">
-            <p className="stat-label">Starting BMI</p>
+            <p className="stat-label">Start</p>
             <p className="stat-value text-lg font-semibold sm:text-xl">
               <span className="font-mono tabular-nums">{startingBmi.toFixed(1)}</span>
             </p>
@@ -134,7 +154,7 @@ export default function Dashboard({ profile, currentWeight, onEdit }: DashboardP
             </div>
           </div>
           <div className="stat transition-all duration-300 ease-out hover:-translate-y-0.5 hover:shadow-soft">
-            <p className="stat-label">Current BMI</p>
+            <p className="stat-label">Current</p>
             <p className="stat-value text-lg font-semibold sm:text-xl">
               <span className="font-mono tabular-nums">{currentBmi.toFixed(1)}</span>
             </p>
@@ -145,7 +165,7 @@ export default function Dashboard({ profile, currentWeight, onEdit }: DashboardP
             </div>
           </div>
           <div className="stat shadow-glow-primary ring-2 ring-primary-200 transition-all duration-300 ease-out hover:-translate-y-0.5">
-            <p className="stat-label">Target BMI</p>
+            <p className="stat-label">Goal</p>
             <p className="stat-value text-lg font-semibold text-primary-700 sm:text-xl">
               <span className="font-mono tabular-nums">{targetBmi.toFixed(1)}</span>
             </p>

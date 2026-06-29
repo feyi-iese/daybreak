@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import type { Profile } from '../db/db';
+import type { WeighIn } from '../db/db';
 import { listWeighIns } from '../db/weighIns';
 import Dashboard from './Dashboard';
 import DailyLogView from './tracking/DailyLogView';
@@ -14,11 +15,12 @@ interface MainHubProps {
 export default function MainHub({ profile, onEdit }: MainHubProps) {
   const [activeTab, setActiveTab] = useState<'log' | 'journey' | 'bmi' | 'projections'>('log');
   const [currentWeight, setCurrentWeight] = useState<number>(profile.startingWeightKg);
-
+  const [weighIns, setWeighIns] = useState<WeighIn[]>([]);
   useEffect(() => {
     let active = true;
     void listWeighIns().then((list) => {
       if (!active) return;
+      setWeighIns(list);
       if (list.length > 0) {
         setCurrentWeight(list[list.length - 1].weightKg);
       } else {
@@ -85,7 +87,7 @@ export default function MainHub({ profile, onEdit }: MainHubProps) {
           <DailyLogView profile={profile} />
         )}
         {activeTab === 'journey' && (
-          <Dashboard profile={profile} currentWeight={currentWeight} onEdit={onEdit} />
+          <Dashboard profile={profile} currentWeight={currentWeight} weighIns={weighIns} onEdit={onEdit} />
         )}
         {activeTab === 'bmi' && (
           <BmiCalculator profile={profile} currentWeightKg={currentWeight} />

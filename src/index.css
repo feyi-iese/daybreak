@@ -218,10 +218,10 @@
     @apply rounded-2xl border border-cream-300/60 bg-cream-50/80 p-4;
   }
   .stat-label {
-    @apply text-xs font-medium uppercase tracking-wide text-ink-muted;
+    @apply text-xs font-medium uppercase tracking-tight text-ink-muted;
   }
   .stat-value {
-    @apply mt-1 font-display text-3xl font-bold leading-none tracking-tight text-ink;
+    @apply mt-1 font-display text-base font-bold leading-none tracking-tight text-ink;
   }
   .stat-unit {
     @apply ml-1 text-base font-medium text-ink-soft;

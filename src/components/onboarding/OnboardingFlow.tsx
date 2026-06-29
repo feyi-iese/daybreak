@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import type { Gender, Profile } from '../../db/db';
 import { getProfile, saveProfile } from '../../db/profile';
-import { addWeighIn } from '../../db/weighIns';
+import { addWeighIn, listWeighIns } from '../../db/weighIns';
 import { formatDateKey } from '../../lib/dateUtils';
 import WelcomeStep from './steps/WelcomeStep';
 import DisclaimerStep from './steps/DisclaimerStep';
@@ -137,12 +137,23 @@ export default function OnboardingFlow({
     }
   }, [draft, mode]);
 
+
   const update = useCallback(
     (patch: Partial<OnboardingDraft>) => {
       setDraft((prev) => ({ ...prev, ...patch }));
     },
     [],
   );
+  // Fetch latest weigh-in to initialize weightTodayKg correctly in edit mode
+  useEffect(() => {
+    if (mode === 'edit') {
+      void listWeighIns().then((list) => {
+        if (list.length > 0) {
+          update({ weightTodayKg: list[list.length - 1].weightKg });
+        }
+      });
+    }
+  }, [mode, update]);
 
   const isEdit = mode === 'edit';
   const step = draft.step;
