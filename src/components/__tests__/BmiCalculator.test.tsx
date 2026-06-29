@@ -121,4 +121,12 @@ describe('BmiCalculator', () => {
       unmount();
     }
   });
+
+  it('lays BMI category ranges out as two columns on mobile', () => {
+    render(<BmiCalculator profile={mockProfileKgCm} currentWeightKg={100} />);
+
+    const categoryList = screen.getByRole('list', { name: /bmi category ranges/i });
+    expect(categoryList).toHaveClass('grid', 'grid-cols-2', 'gap-2.5', 'sm:grid-cols-1');
+    expect(within(categoryList).getAllByRole('listitem')).toHaveLength(4);
+  });
 });
