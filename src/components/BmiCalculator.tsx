@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import type { Profile } from '../db/db';
 import { BMI_THRESHOLDS, classifyBmi, computeBmi, weightForBmi } from '../lib/bmi';
 import { formatHeight, formatWeight, kgToLb, lbToKg } from '../lib/units';
+import { getBmiChipClassName } from '../lib/bmiStyles';
 
 interface BmiCalculatorProps {
   profile: Profile;
@@ -124,7 +125,7 @@ export default function BmiCalculator({ profile, currentWeightKg }: BmiCalculato
     <section className="card animate-fade-rise">
       <div className="text-left">
         <p className="hero-eyebrow">Interactive Simulator</p>
-        <h2 className="hero-title mt-2">Explore your BMI horizon</h2>
+        {/* <h2 className="hero-title mt-2">Explore your BMI horizon</h2> */}
         <p className="hero-sub max-w-[48ch]">
           Adjust your weight to see how BMI categories shift at your saved height.
         </p>
@@ -297,7 +298,7 @@ export default function BmiCalculator({ profile, currentWeightKg }: BmiCalculato
               <span className="font-mono tabular-nums">{simulatedBmi.toFixed(1)}</span>
             </p>
             <div className="mt-4">
-              <span className={`bmi-chip bmi-chip--${simulatedCategory.toLowerCase()} px-2.5 py-1 text-xs font-semibold`}>
+              <span className={getBmiChipClassName(simulatedCategory, 'px-2.5 py-1 text-xs font-semibold')}>
                 {simulatedCategory}
               </span>
             </div>

@@ -109,7 +109,7 @@ export default function RisingSunGauge({ pct, lost, remaining }: RisingSunGaugeP
 
         {/* Center Percentage Display */}
         <div className="absolute bottom-6 left-1/2 -translate-x-1/2 text-center select-none">
-          <div className="font-mono text-5xl sm:text-6xl font-semibold text-ink tabular-nums tracking-tight">
+          <div className="font-mono text-5xl sm:text-6xl font-semibold text-ink tabular-nums">
             {Math.round(clampedPct)}%
           </div>
           <div className="text-xs text-ink-soft mt-0.5 font-medium uppercase tracking-wide">

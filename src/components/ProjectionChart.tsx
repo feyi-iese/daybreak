@@ -101,7 +101,7 @@ export default function ProjectionChart({
         x={W - PAD.right}
         y={goalY - 6}
         textAnchor="end"
-        className="fill-accent-500 font-mono"
+        className="fill-accent-500 font-mono chart-text"
         fontSize="10"
       >
         Goal &middot; {Math.round(targetKg)}&nbsp;kg
@@ -114,7 +114,7 @@ export default function ProjectionChart({
       <text
         x={xOf(0) + 8}
         y={yOf(startKg) + 4}
-        className="fill-ink font-mono"
+        className="fill-ink font-mono chart-text"
         fontSize="10"
       >
         Today &middot; {Math.round(startKg)}&nbsp;kg

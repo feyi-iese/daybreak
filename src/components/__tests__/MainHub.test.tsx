@@ -45,7 +45,7 @@ describe('MainHub BMI Integration', () => {
     expect(bmiTab).toHaveAttribute('aria-selected', 'true');
 
     // The BMI Calculator should appear
-    expect(screen.getByText('Explore your BMI horizon')).toBeInTheDocument();
+    expect(screen.getByText('Interactive Simulator')).toBeInTheDocument();
 
     // Verify comparison line is using the latest weigh-in (95 kg / 29.3 BMI)
     const resultGroup = screen.getByRole('group', { name: /bmi simulation result/i });

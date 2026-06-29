@@ -29,9 +29,9 @@ function Shell({ screen, children }: { screen: string; children: ReactNode }) {
     <div className="app-shell">
       <div className="sun-glow animate-float" aria-hidden="true" />
       <div className="app-main">
-        <header className="mb-8 flex items-center justify-between">
+        <header className="mb-8 flex items-center justify-center">
           <span className="wordmark">
-            <Logo className="text-primary-600 h-6 w-6" />
+            <Logo className="text-primary-600 h-12 w-12" />
             Daybreak
           </span>
         </header>

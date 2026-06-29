@@ -34,7 +34,8 @@ export default function Projection({ profile, currentWeightKg }: ProjectionProps
 
   return (
     <div className="space-y-4">
-      <h2 className="section-title tracking-tight">Your projected journey</h2>
+      <p className="hero-eyebrow">Your projected journey</p>
+      {/* <h2 className="section-title tracking-tight">Your projected journey</h2> */}
 
       {goalBeyondRange ? (
         <>

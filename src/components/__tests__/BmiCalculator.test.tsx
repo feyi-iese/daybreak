@@ -1,4 +1,4 @@
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import BmiCalculator from '../BmiCalculator';
 import type { Profile } from '../../db/db';
@@ -29,7 +29,7 @@ describe('BmiCalculator', () => {
   it('renders correctly with initial kg/cm profile', () => {
     render(<BmiCalculator profile={mockProfileKgCm} currentWeightKg={100} />);
 
-    expect(screen.getByText('Explore your BMI horizon')).toBeInTheDocument();
+    expect(screen.getByText('Interactive Simulator')).toBeInTheDocument();
     expect(screen.getByText('180 cm')).toBeInTheDocument();
 
     const resultGroup = screen.getByRole('group', { name: /bmi simulation result/i });
@@ -103,5 +103,22 @@ describe('BmiCalculator', () => {
     // 75 kg at 180 cm is 23.1 BMI
     expect(resultGroup).toHaveTextContent('23.1');
     expect(resultGroup).toHaveTextContent('Normal');
+  });
+
+  it('themes the simulated BMI chip for each BMI category', () => {
+    const cases = [
+      { weightKg: 55, label: 'Underweight', classes: ['border-tone-sky-edge', 'bg-tone-sky-soft', 'text-tone-sky-ink'] },
+      { weightKg: 70, label: 'Normal', classes: ['border-tone-mint-edge', 'bg-tone-mint-soft', 'text-tone-mint-ink'] },
+      { weightKg: 85, label: 'Overweight', classes: ['border-tone-sun-edge', 'bg-tone-sun-soft', 'text-tone-sun-ink'] },
+      { weightKg: 100, label: 'Obese', classes: ['border-tone-rose-edge', 'bg-tone-rose-soft', 'text-tone-rose-ink'] },
+    ] as const;
+
+    for (const { weightKg, label, classes } of cases) {
+      const { unmount } = render(<BmiCalculator profile={mockProfileKgCm} currentWeightKg={weightKg} />);
+      const resultGroup = screen.getByRole('group', { name: /bmi simulation result/i });
+      const chip = within(resultGroup).getByText(label);
+      expect(chip).toHaveClass('bmi-chip', ...classes);
+      unmount();
+    }
   });
 });

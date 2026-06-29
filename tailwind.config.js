@@ -54,9 +54,10 @@ export default {
         'tone-rose': { soft: '#F4ECEC', ink: '#8A5350', edge: '#E7D7D5' },
       },
       fontFamily: {
-        display: ['Geist', 'ui-sans-serif', 'system-ui', 'sans-serif'],
-        sans: ['Geist', 'ui-sans-serif', 'system-ui', 'sans-serif'],
-        mono: ['Geist Mono', 'ui-monospace', 'monospace'],
+        display: ['MPlus', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+        sans: ['MPlus', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+        mono: ['MPlus Code', 'ui-monospace', 'monospace'],
+        customLogo: ['Isego'],
       },
       // Soft, layered, warm-tinted shadows (warm umber base 67,42,20).
       boxShadow: {

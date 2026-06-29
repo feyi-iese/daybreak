@@ -1,4 +1,5 @@
 import { computeBmi, classifyBmi } from '../lib/bmi';
+import { getBmiChipClassName } from '../lib/bmiStyles';
 import type { Profile } from '../db/db';
 import { formatWeight, kgToLb } from '../lib/units';
 import RisingSunGauge from './RisingSunGauge';
@@ -127,7 +128,7 @@ export default function Dashboard({ profile, currentWeight, onEdit }: DashboardP
               <span className="font-mono tabular-nums">{startingBmi.toFixed(1)}</span>
             </p>
             <div className="mt-2">
-              <span className={`bmi-chip bmi-chip--${startingCategory.toLowerCase()} px-1.5 py-0.5 text-[10px]`}>
+              <span className={getBmiChipClassName(startingCategory, 'px-1.5 py-0.5 text-[10px]')}>
                 {startingCategory}
               </span>
             </div>
@@ -138,7 +139,7 @@ export default function Dashboard({ profile, currentWeight, onEdit }: DashboardP
               <span className="font-mono tabular-nums">{currentBmi.toFixed(1)}</span>
             </p>
             <div className="mt-2">
-              <span className={`bmi-chip bmi-chip--${currentCategory.toLowerCase()} px-1.5 py-0.5 text-[10px]`}>
+              <span className={getBmiChipClassName(currentCategory, 'px-1.5 py-0.5 text-[10px]')}>
                 {currentCategory}
               </span>
             </div>
@@ -149,7 +150,7 @@ export default function Dashboard({ profile, currentWeight, onEdit }: DashboardP
               <span className="font-mono tabular-nums">{targetBmi.toFixed(1)}</span>
             </p>
             <div className="mt-2">
-              <span className={`bmi-chip bmi-chip--${targetCategory.toLowerCase()} px-1.5 py-0.5 text-[10px]`}>
+              <span className={getBmiChipClassName(targetCategory, 'px-1.5 py-0.5 text-[10px]')}>
                 {targetCategory}
               </span>
             </div>
