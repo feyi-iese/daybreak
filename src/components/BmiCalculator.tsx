@@ -135,7 +135,7 @@ export default function BmiCalculator({ profile, currentWeightKg }: BmiCalculato
         {/* Left Column: Controls & Category Bands */}
         <div className="order-1 md:col-span-7 space-y-6">
           {/* Height card */}
-          <div className="card-quiet flex items-center justify-between">
+          {/* <div className="card-quiet flex items-center justify-between">
             <div>
               <p className="text-xs font-semibold uppercase tracking-[0.1em] text-ink-muted">Fixed height</p>
               <p className="font-display text-xl font-bold text-ink mt-1">
@@ -145,7 +145,7 @@ export default function BmiCalculator({ profile, currentWeightKg }: BmiCalculato
             <p className="footnote max-w-[24ch] text-right text-ink-soft">
               BMI changes here only when simulated weight changes.
             </p>
-          </div>
+          </div> */}
 
           {/* Slider Control */}
           <div className="space-y-2">
@@ -212,7 +212,14 @@ export default function BmiCalculator({ profile, currentWeightKg }: BmiCalculato
               </button>
             </div>
           </div>
+          <div className="flex flex-wrap items-center justify-between gap-3">
+                  <span className="field-label">Your height</span>
+            <p className="font-display text-xl font-bold text-ink mt-1">
+                {formatHeight(profile.heightCm, heightUnit)}
+              </p>
         </div>
+        </div>
+        
         <div className="order-2 md:order-3 md:col-span-12">
           {/* Range Band */}
           <div className="relative pt-8 pb-2">
