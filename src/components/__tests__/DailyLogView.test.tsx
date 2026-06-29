@@ -74,10 +74,13 @@ describe('DailyLogView Integration Flow', () => {
     const savedDose = (await db.doses.toArray())[0];
     expect(typeof savedDose.takenAt).toBe('number');
 
-    // Edit the dose
-    const editBtn = screen.getByRole('button', { name: /edit/i });
-    await user.click(editBtn);
+    // Verify visible Edit/Delete buttons are absent before swipe reveal
+    expect(screen.queryByRole('button', { name: /^edit$/i })).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /^delete$/i })).not.toBeInTheDocument();
 
+    // Edit the dose
+    const doseCard = screen.getByRole('button', { name: /dose:\s*5 mg/i });
+    await user.click(doseCard);
     const newDosageBtn = screen.getByRole('button', { name: /^7.5 mg$/i });
     await user.click(newDosageBtn);
 
@@ -166,8 +169,8 @@ describe('DailyLogView Integration Flow', () => {
     });
 
     // Edit the dose
-    const editBtn = screen.getByRole('button', { name: /edit/i });
-    await user.click(editBtn);
+    const doseCard = screen.getByRole('button', { name: /dose:\s*2.5 mg/i });
+    await user.click(doseCard);
 
     // Verify time input is pre-filled with 14:30
     const editTimeInput = screen.getByLabelText(/time taken/i) as HTMLInputElement;
@@ -216,10 +219,26 @@ describe('DailyLogView Integration Flow', () => {
       expect(screen.getByText(/“felt tired”/i)).toBeInTheDocument();
     });
 
-    // Delete it (opens the custom confirm dialog, no native window.confirm)
-    const deleteBtn = screen.getByRole('button', { name: /^delete$/i });
-    await user.click(deleteBtn);
+    // Verify visible Edit/Delete buttons are absent before swipe reveal
+    expect(screen.queryByRole('button', { name: /^edit$/i })).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /^delete$/i })).not.toBeInTheDocument();
 
+    // Delete it (opens the custom confirm dialog, no native window.confirm)
+    const feelingsCard = screen.getByRole('button', { name: /feelings:\s*nausea, fatigue/i });
+
+    const createPointerEvent = (type: string, props: { clientX: number; clientY: number; pointerId?: number }) => {
+      const PointerEventClass = ((typeof PointerEvent !== 'undefined' ? PointerEvent : null) || (typeof MouseEvent !== 'undefined' ? MouseEvent : null) || Event) as new (type: string, dict?: EventInit) => Event;
+      const event = new PointerEventClass(type, { bubbles: true, cancelable: true, ...props });
+      Object.defineProperty(event, 'clientX', { get: () => props.clientX });
+      Object.defineProperty(event, 'clientY', { get: () => props.clientY });
+      return event;
+    };
+
+    fireEvent(feelingsCard, createPointerEvent('pointerdown', { pointerId: 1, clientX: 240, clientY: 20 }));
+    fireEvent(feelingsCard, createPointerEvent('pointermove', { pointerId: 1, clientX: 130, clientY: 22 }));
+    fireEvent(feelingsCard, createPointerEvent('pointerup', { pointerId: 1, clientX: 130, clientY: 22 }));
+    const deleteBtn = await screen.findByRole('button', { name: /delete feelings log/i });
+    await user.click(deleteBtn);
     const confirmBtn = await screen.findByRole('button', { name: /delete entry/i });
     await user.click(confirmBtn);
 
@@ -229,6 +248,38 @@ describe('DailyLogView Integration Flow', () => {
     });
 
     expect(await db.feelings.count()).toBe(0);
+  });
+
+  it('keyboard navigation reveals and hides delete button via ArrowLeft and Escape', async () => {
+    const user = userEvent.setup();
+    render(<DailyLogView profile={mockProfile} />);
+
+    // Log a feelings entry
+    const logFeelingBtn = screen.getByRole('button', { name: /\+ log feelings/i });
+    await user.click(logFeelingBtn);
+    const nauseaBtn = screen.getByRole('button', { name: /nausea/i });
+    await user.click(nauseaBtn);
+    const saveBtn = screen.getByRole('button', { name: /save feelings/i });
+    await user.click(saveBtn);
+
+    // Get the card
+    const feelingsCard = await screen.findByRole('button', { name: /feelings:\s*nausea/i });
+
+    // Focus and press ArrowLeft
+    feelingsCard.focus();
+    expect(feelingsCard).toHaveFocus();
+    await user.keyboard('{ArrowLeft}');
+
+    // Delete button should now be focusable/available in document
+    const deleteBtn = screen.getByRole('button', { name: /delete feelings log/i });
+    expect(deleteBtn).toBeInTheDocument();
+
+    // Press Escape
+    await user.keyboard('{Escape}');
+
+    // Delete button should not be accessible/focusable (tabIndex -1, aria-hidden)
+    expect(deleteBtn).toHaveAttribute('tabindex', '-1');
+    expect(feelingsCard).toHaveFocus();
   });
 
   it('can log vitals', async () => {
