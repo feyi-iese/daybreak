@@ -247,41 +247,41 @@ export default function BmiCalculator({ profile, currentWeightKg }: BmiCalculato
               {/* Underweight Row */}
               <div role="listitem" className={`grid grid-cols-[1fr_auto] items-center gap-x-2 gap-y-1 rounded-xl border px-3 py-3 transition-all duration-300 sm:grid-cols-[minmax(8.5rem,1fr)_6.75rem_9.5rem] sm:gap-x-4 sm:px-4 ${cardClasses.Underweight}`}>
                 <div className="flex items-center gap-2.5">
-                  <span className="w-2 h-2 rounded-full bg-tone-sky-edge border border-tone-sky-ink/30 shrink-0" />
+                  <span className="hidden sm:inline-block w-2 h-2 rounded-full bg-tone-sky-edge border border-tone-sky-ink/30 shrink-0" />
                   <span className="text-[10px] font-bold uppercase tracking-wider text-tone-sky-ink whitespace-nowrap">Underweight</span>
                 </div>
-                <span className="font-mono text-xs font-semibold text-ink-soft text-right tabular-nums whitespace-nowrap">&lt; 18.5</span>
-                <span className="col-span-2 font-mono text-xs text-ink-muted text-right tabular-nums whitespace-nowrap sm:col-span-1">&lt; {underweightMax}</span>
+                <span className="font-mono text-xs font-semibold text-ink-soft text-right tabular-nums whitespace-nowrap tracking-tighter sm:tracking-normal">&lt; 18.5</span>
+                <span className="col-span-2 font-mono text-xs text-ink-muted text-right tabular-nums whitespace-nowrap tracking-tighter sm:tracking-normal sm:col-span-1">&lt; {underweightMax}</span>
               </div>
 
               {/* Normal Row */}
               <div role="listitem" className={`grid grid-cols-[1fr_auto] items-center gap-x-2 gap-y-1 rounded-xl border px-3 py-3 transition-all duration-300 sm:grid-cols-[minmax(8.5rem,1fr)_6.75rem_9.5rem] sm:gap-x-4 sm:px-4 ${cardClasses.Normal}`}>
                 <div className="flex items-center gap-2.5">
-                  <span className="w-2 h-2 rounded-full bg-tone-mint-edge border border-tone-mint-ink/30 shrink-0" />
+                  <span className="hidden sm:inline-block w-2 h-2 rounded-full bg-tone-mint-edge border border-tone-mint-ink/30 shrink-0" />
                   <span className="text-[10px] font-bold uppercase tracking-wider text-tone-mint-ink whitespace-nowrap">Normal</span>
                 </div>
-                <span className="font-mono text-xs font-semibold text-ink-soft text-right tabular-nums whitespace-nowrap">18.5 - 25</span>
-                <span className="col-span-2 font-mono text-xs text-ink-muted text-right tabular-nums whitespace-nowrap sm:col-span-1">{underweightMax} - {normalMax}</span>
+                <span className="font-mono text-xs font-semibold text-ink-soft text-right tabular-nums whitespace-nowrap tracking-tighter sm:tracking-normal">18.5 - 25</span>
+                <span className="col-span-2 font-mono text-xs text-ink-muted text-right tabular-nums whitespace-nowrap tracking-tighter sm:tracking-normal sm:col-span-1">{underweightMax} - {normalMax}</span>
               </div>
 
               {/* Overweight Row */}
               <div role="listitem" className={`grid grid-cols-[1fr_auto] items-center gap-x-2 gap-y-1 rounded-xl border px-3 py-3 transition-all duration-300 sm:grid-cols-[minmax(8.5rem,1fr)_6.75rem_9.5rem] sm:gap-x-4 sm:px-4 ${cardClasses.Overweight}`}>
                 <div className="flex items-center gap-2.5">
-                  <span className="w-2 h-2 rounded-full bg-tone-sun-edge border border-tone-sun-ink/30 shrink-0" />
+                  <span className="hidden sm:inline-block w-2 h-2 rounded-full bg-tone-sun-edge border border-tone-sun-ink/30 shrink-0" />
                   <span className="text-[10px] font-bold uppercase tracking-wider text-tone-sun-ink whitespace-nowrap">Overweight</span>
                 </div>
-                <span className="font-mono text-xs font-semibold text-ink-soft text-right tabular-nums whitespace-nowrap">25 - 30</span>
-                <span className="col-span-2 font-mono text-xs text-ink-muted text-right tabular-nums whitespace-nowrap sm:col-span-1">{normalMax} - {overweightMax}</span>
+                <span className="font-mono text-xs font-semibold text-ink-soft text-right tabular-nums whitespace-nowrap tracking-tighter sm:tracking-normal">25 - 30</span>
+                <span className="col-span-2 font-mono text-xs text-ink-muted text-right tabular-nums whitespace-nowrap tracking-tighter sm:tracking-normal sm:col-span-1">{normalMax} - {overweightMax}</span>
               </div>
 
               {/* Obese Row */}
               <div role="listitem" className={`grid grid-cols-[1fr_auto] items-center gap-x-2 gap-y-1 rounded-xl border px-3 py-3 transition-all duration-300 sm:grid-cols-[minmax(8.5rem,1fr)_6.75rem_9.5rem] sm:gap-x-4 sm:px-4 ${cardClasses.Obese}`}>
                 <div className="flex items-center gap-2.5">
-                  <span className="w-2 h-2 rounded-full bg-tone-rose-edge border border-tone-rose-ink/30 shrink-0" />
+                  <span className="hidden sm:inline-block w-2 h-2 rounded-full bg-tone-rose-edge border border-tone-rose-ink/30 shrink-0" />
                   <span className="text-[10px] font-bold uppercase tracking-wider text-tone-rose-ink whitespace-nowrap">Obese</span>
                 </div>
-                <span className="font-mono text-xs font-semibold text-ink-soft text-right tabular-nums whitespace-nowrap">≥ 30</span>
-                <span className="col-span-2 font-mono text-xs text-ink-muted text-right tabular-nums whitespace-nowrap sm:col-span-1">≥ {overweightMax}</span>
+                <span className="font-mono text-xs font-semibold text-ink-soft text-right tabular-nums whitespace-nowrap tracking-tighter sm:tracking-normal">≥ 30</span>
+                <span className="col-span-2 font-mono text-xs text-ink-muted text-right tabular-nums whitespace-nowrap tracking-tighter sm:tracking-normal sm:col-span-1">≥ {overweightMax}</span>
               </div>
             </div>
           </div>
