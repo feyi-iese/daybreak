@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState, type CSSProperties } from 'react';
 import type { Profile } from '../db/db';
 import { BMI_THRESHOLDS, classifyBmi, computeBmi, weightForBmi } from '../lib/bmi';
 import { formatHeight, formatWeight, kgToLb, lbToKg } from '../lib/units';
@@ -45,6 +45,11 @@ export default function BmiCalculator({ profile, currentWeightKg }: BmiCalculato
   const overweightMax = formatWeight(obeseMinKg, unit);
 
   const clampWeightKg = (weightKg: number) => Math.min(sliderMaxKg, Math.max(sliderMinKg, weightKg));
+
+  const sliderSpanKg = sliderMaxKg - sliderMinKg;
+  const sliderProgressPercent = sliderSpanKg > 0
+    ? Math.min(100, Math.max(0, ((simulatedWeightKg - sliderMinKg) / sliderSpanKg) * 100))
+    : 0;
 
   const simulatedBmi = computeBmi(simulatedWeightKg, profile.heightCm);
   const simulatedCategory = classifyBmi(simulatedBmi);
@@ -181,7 +186,8 @@ export default function BmiCalculator({ profile, currentWeightKg }: BmiCalculato
               onChange={(e) => setSimulatedWeightKg(clampWeightKg(parseFloat(e.target.value)))}
               aria-label="Simulated weight slider"
               aria-valuetext={`${formatWeight(simulatedWeightKg, unit)}, BMI ${simulatedBmi.toFixed(1)}, ${simulatedCategory}`}
-              className="mt-3 w-full accent-primary-600 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-primary-300/40"
+              className="range-touch mt-3"
+              style={{ '--range-progress': `${sliderProgressPercent}%` } as CSSProperties}
             />
           </div>
 

@@ -73,6 +73,14 @@ describe('BmiCalculator', () => {
     expect(directInput).toHaveValue(80);
   });
 
+  it('renders the simulated weight slider with the enlarged mobile touch target class', () => {
+    render(<BmiCalculator profile={mockProfileKgCm} currentWeightKg={100} />);
+
+    const slider = screen.getByRole('slider', { name: /simulated weight slider/i });
+    expect(slider).toHaveClass('range-touch', 'mt-3');
+    expect(slider.getAttribute('style')).toContain('--range-progress:');
+  });
+
   it('edits simulated weight directly from the value pill for lb profiles', async () => {
     const user = userEvent.setup();
     render(<BmiCalculator profile={mockProfileLbFtIn} currentWeightKg={100} />);
